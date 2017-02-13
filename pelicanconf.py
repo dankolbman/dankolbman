@@ -17,8 +17,9 @@ TIMEZONE = 'America/Chicago'
 
 DEFAULT_LANG = 'en'
 
+
 # Feed generation is usually not desired when developing
-FEED_ALL_ATOM = None
+FEED_ALL_RSS = None
 CATEGORY_FEED_ATOM = None
 TRANSLATION_FEED_ATOM = None
 AUTHOR_FEED_ATOM = None
@@ -31,8 +32,16 @@ LINKS = (('Pelican', 'http://getpelican.com/'),
          ('You can modify those links in your config file', '#'),)
 
 # Social widget
-SOCIAL = (('You can add links in your config file', '#'),
-          ('Another social link', '#'),)
+SOCIAL = (('email', 'dan@kolbman.com'),
+    ('github', 'https://github.com/dankolbman'))
+
+# Uncomment following line if you want document-relative URLs when developing
+RELATIVE_URLS = True
+
+BIO = ""
+PROFILE_IMAGE = "dankolbman.jpg"
+
+THEME = "pelican-themes/hyde"
 
 DEFAULT_PAGINATION = 1
 
