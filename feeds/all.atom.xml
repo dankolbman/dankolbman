@@ -1,0 +1,492 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Dan Kolbman</title><link href="/" rel="alternate"></link><link href="/feeds/all.atom.xml" rel="self"></link><id>/</id><updated>2015-01-08T00:00:00-06:00</updated><entry><title>Picturing the Average Tinder Girl</title><link href="/face-avg.html" rel="alternate"></link><published>2015-01-08T00:00:00-06:00</published><updated>2015-01-08T00:00:00-06:00</updated><author><name>Dan Kolbman</name></author><id>tag:None,2015-01-08:/face-avg.html</id><summary type="html">&lt;p&gt;In this article, I'm going to discuss the steps I took to get an image of the 
+average Tinder girl. If you're also interested in a general analysis of the 
+average Tinder girl's profile, make sure to &lt;a href="/meet-emily.html"&gt;Meet Emily: The Average Tinder 
+Girl&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;You can get the scripts and the data I've collected &lt;a href="https://github.com/dankolbman/CleverTind"&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;h1&gt;The Bot&lt;/h1&gt;
+&lt;p&gt;Tinder is a simple dating app that has become quite popular, popular enough to
+attract bot accounts advertising purposes. Users of Tinder will be certainly be 
+familiar with the bots that spam simple ads as well as those that semi-intelligently
+respond to conversation leading into a more convincing ad. After dealing with 
+these bots myself, I was intrigued by how I might go about making my own bot for
+entertainment purposes. It turns out that it's actually relatively easy. The 
+Tinder API only requires a Facebook authentication token of an account with an 
+active Tinder app to retrieve a token for Tinder's API. After that, the Tinder
+API is wide open. There's even a couple unofficial wrappers available, I'm using
+Tinder Pyro &lt;sup id="fnref-tinder_pyro"&gt;&lt;a class="footnote-ref" href="#fn-tinder_pyro"&gt;1&lt;/a&gt;&lt;/sup&gt;.&lt;/p&gt;
+&lt;p&gt;After some preliminary fooling around, the treasure trove of data soon became 
+evident. I wasn't sure what I was going to do with it, but I had my bot
+downloading and storing profile data anyway. After a week I had a couple gigs of
+data and by the time I figured what to do with it all, I had gone through over 
+a hundred-thousand profiles. What was I going to do with all that? It seemed 
+pretty obvious. Let's construct the average Tinder girl! So then...&lt;/p&gt;
+&lt;h1&gt;What does she look like?&lt;/h1&gt;
+&lt;p&gt;With all those photos, we should be able to build up some idea of what this girl
+looks like. Well a quick and dirty attempt at getting an image of our girl is to
+blindly average all the profile pictures I've collected. Here's what I got after
+adding 62820 primary profile photos together:&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Detected" src="/posts/faceavg/prof_avg.png"&gt;&lt;/p&gt;
+&lt;p&gt;It sure doesn't show any detail, but there is some sign that this is a human being.
+If you squint you can make out a flesh-tinted blob around the center. Perhaps
+that's a hint of shoulders on the lower half? I was quite surprised that anything
+of remote resemblance to a person came out of this. Of course this isn't even
+close to what we're looking for, and fortunately, we can still do better.&lt;/p&gt;
+&lt;h1&gt;Getting rid of the junk&lt;/h1&gt;
+&lt;p&gt;If you've swiped through Tinder profiles before, you'll know there's a lot of
+variation in the pictures. Some are from far away, some at strange angles, 
+sometimes it's a group shot, or maybe there isn't even a person in it! Sorting 
+out all the awful pictures that are ruining my average is going to help out a
+lot. If only we could check that each picture being averaged is of a person.
+Well, thankfully face detection is something that is widely studied and quite 
+easy to use. OpenCV has a cascade classifier&lt;sup id="fnref-cascade_classifier"&gt;&lt;a class="footnote-ref" href="#fn-cascade_classifier"&gt;2&lt;/a&gt;&lt;/sup&gt; for detecting 
+objects and even comes with some pre-trained cascades for face detection.
+Awesome! Here's the meat of what I'm doing to find faces in an image:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;face_cascade&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;cv2&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;CascadeClassifier&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt; &lt;span class="n"&gt;haar_map&lt;/span&gt; &lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;img&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;cv2&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;imread&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt; &lt;span class="n"&gt;path&lt;/span&gt; &lt;span class="p"&gt;)&lt;/span&gt; 
+&lt;span class="n"&gt;gray&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;cv2&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;cvtColor&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;img&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;cv2&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;COLOR_BGR2GRAY&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;faces&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;face_cascade&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;detectMultiScale&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+  &lt;span class="n"&gt;gray&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+  &lt;span class="n"&gt;scaleFactor&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mf"&gt;1.2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+  &lt;span class="n"&gt;minNeighbors&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+  &lt;span class="n"&gt;minSize&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;30&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;30&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
+  &lt;span class="n"&gt;flags&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;cv2&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;cv&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;CV_HAAR_SCALE_IMAGE&lt;/span&gt;
+&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Once we get the faces in the image, it's time to check that it's an acceptable 
+picture There's only two criteria I'm going to match for:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Is there exactly one face in the photo?&lt;/li&gt;
+&lt;li&gt;If so, is it at least 100x100px large?&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;If both of these criteria are met, great! We'll average it. If not, just ignore it.
+Here's what happens after sorting through the same profile pictures as before:&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Detected faces" src="/detect_avg.png"&gt;&lt;/p&gt;
+&lt;p&gt;This is after sorting through the same 62820 profiles as before. The detection 
+method narrowed it down to 21001 positive samples (that's 33.56%).
+And, ehh, It's better, a little. There's more shape to the head. There's some sign of a chest
+and neck now too. At the very least, I'd say this is good enough evidence to say
+that the average girl on Tinder is white (or our cascade is biased!). But we 
+still don't have any features, let alone something that can be identified as a
+face!&lt;/p&gt;
+&lt;h1&gt;Bringing her into focus&lt;/h1&gt;
+&lt;p&gt;There's one thing that the cascade classifier is doing that is making the average 
+only 'meh' and that is that it doesn't care about the location of identified faces.
+The classifier will detect a face anywhere in the image, but I want something 
+like a portrait-like result. This means that just a mere detection is still going
+to result in a blurry, out of focus, image. Clearly we need some better cooperation.
+The classifier does report the location of each object it detects. Let's try
+ scaling each photo to frame only the reported face and average those. This is 
+pretty easy to do with OpenCV using a perspective transform&lt;sup id="fnref-transform"&gt;&lt;a class="footnote-ref" href="#fn-transform"&gt;3&lt;/a&gt;&lt;/sup&gt;. Here's how I do that:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;face&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;float32&lt;/span&gt;&lt;span class="p"&gt;([[&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;],[&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="n"&gt;w&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt;
+                   &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="n"&gt;h&lt;/span&gt;&lt;span class="p"&gt;],[&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="n"&gt;w&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="n"&gt;h&lt;/span&gt;&lt;span class="p"&gt;]])&lt;/span&gt;
+&lt;span class="n"&gt;frame&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;float32&lt;/span&gt;&lt;span class="p"&gt;([[&lt;/span&gt;&lt;span class="n"&gt;pic_w&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;pic_w&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt;
+                    &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;pic_h&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;pic_w&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt;
+                    &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;pic_w&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;pic_h&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt;
+                    &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;pic_h&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;pic_h&lt;/span&gt;&lt;span class="p"&gt;]])&lt;/span&gt; 
+&lt;span class="n"&gt;M&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;cv2&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;getPerspectiveTransform&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;face&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;frame&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;new_img&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;cv2&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;warpPerspective&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;img&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;M&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;pic_w&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;pic_h&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Here, I'm taking the bounding box of the face and having OpenCV get the transform
+required to make it be framed in the full picture. I then apply that transform 
+to the image, and carry on with the averaging from there. After that, we get a
+nice picture:&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Detected and transformed" src="/full_101.png"&gt;&lt;/p&gt;
+&lt;p&gt;Now that's pretty good! This is for the same 21001 positive samples as before, 
+only now they've been centered properly. &lt;/p&gt;
+&lt;h1&gt;An actual average&lt;/h1&gt;
+&lt;p&gt;There's still a problem with the averaging, however. If we make a comparison of
+different averages for different numbers of samples, we can see they don't 
+really change after a certain point.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Comparison" src="/compare_small.png"&gt;&lt;/p&gt;
+&lt;p&gt;The problem is that our profile images are only 8-bit JPEGs and are being 
+processed as such. This means that we're going to have trouble with precision
+when we start getting close to 256 samples. That's clearly not good enough when
+there's more than 10000 images to be combined! To counter this, I could covert 
+all the images to some higher bit-depth, but instead I've chosen to simply save 
+the average of every 100 positive samples and then average all of those. In 
+addition, I'm also using a numpy ndarray with a type of float64 to hold all of 
+my averaging data, so there shouldn't be any concern for precision issues in this
+method.
+After all this, we get our girl:&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Detected" src="/trans_avg.png"&gt;&lt;/p&gt;
+&lt;p&gt;It's pretty clear that there is a lot less noise than the last attempt, which 
+we should expect from so many samples. Even more, we can even use our cascade to
+see if the result is identifiable as a face:&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Detected" src="/detected.png"&gt;&lt;/p&gt;
+&lt;p&gt;And it turns out it is! That shouldn't be too surprising seeing as it's 
+just an average of positive matches. Though it's still evidence to show that
+the bounding boxes on the detected faces were consistent enough to provide a strong
+average.&lt;/p&gt;
+&lt;div class="footnote"&gt;
+&lt;hr&gt;
+&lt;ol&gt;
+&lt;li id="fn-tinder_pyro"&gt;
+&lt;p&gt;&lt;a href="https://github.com/nneal/tinder_pyro"&gt;Tinder Pyro&lt;/a&gt;, an unofficial 
+ruby wrapper for the Tinder API.&amp;#160;&lt;a class="footnote-backref" href="#fnref-tinder_pyro" title="Jump back to footnote 1 in the text"&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id="fn-cascade_classifier"&gt;
+&lt;p&gt;&lt;a href="http://docs.opencv.org/modules/objdetect/doc/cascade_classification.html"&gt;OpenCV Cascade Classification&lt;/a&gt;&amp;#160;&lt;a class="footnote-backref" href="#fnref-cascade_classifier" title="Jump back to footnote 2 in the text"&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id="fn-transform"&gt;
+&lt;p&gt;OpenCV's &lt;a href="http://docs.opencv.org/modules/imgproc/doc/geometric_transformations.html#getperspectivetransform"&gt;getPerspectiveTransform&lt;/a&gt; applied with &lt;a href="http://docs.opencv.org/modules/imgproc/doc/geometric_transformations.html#warpperspective"&gt;warpPerspective&lt;/a&gt;&amp;#160;&lt;a class="footnote-backref" href="#fnref-transform" title="Jump back to footnote 3 in the text"&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;</summary><content type="html">&lt;p&gt;In this article, I'm going to discuss the steps I took to get an image of the 
+average Tinder girl. If you're also interested in a general analysis of the 
+average Tinder girl's profile, make sure to &lt;a href="/meet-emily.html"&gt;Meet Emily: The Average Tinder 
+Girl&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;You can get the scripts and the data I've collected &lt;a href="https://github.com/dankolbman/CleverTind"&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;h1&gt;The Bot&lt;/h1&gt;
+&lt;p&gt;Tinder is a simple dating app that has become quite popular, popular enough to
+attract bot accounts advertising purposes. Users of Tinder will be certainly be 
+familiar with the bots that spam simple ads as well as those that semi-intelligently
+respond to conversation leading into a more convincing ad. After dealing with 
+these bots myself, I was intrigued by how I might go about making my own bot for
+entertainment purposes. It turns out that it's actually relatively easy. The 
+Tinder API only requires a Facebook authentication token of an account with an 
+active Tinder app to retrieve a token for Tinder's API. After that, the Tinder
+API is wide open. There's even a couple unofficial wrappers available, I'm using
+Tinder Pyro &lt;sup id="fnref-tinder_pyro"&gt;&lt;a class="footnote-ref" href="#fn-tinder_pyro"&gt;1&lt;/a&gt;&lt;/sup&gt;.&lt;/p&gt;
+&lt;p&gt;After some preliminary fooling around, the treasure trove of data soon became 
+evident. I wasn't sure what I was going to do with it, but I had my bot
+downloading and storing profile data anyway. After a week I had a couple gigs of
+data and by the time I figured what to do with it all, I had gone through over 
+a hundred-thousand profiles. What was I going to do with all that? It seemed 
+pretty obvious. Let's construct the average Tinder girl! So then...&lt;/p&gt;
+&lt;h1&gt;What does she look like?&lt;/h1&gt;
+&lt;p&gt;With all those photos, we should be able to build up some idea of what this girl
+looks like. Well a quick and dirty attempt at getting an image of our girl is to
+blindly average all the profile pictures I've collected. Here's what I got after
+adding 62820 primary profile photos together:&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Detected" src="/posts/faceavg/prof_avg.png"&gt;&lt;/p&gt;
+&lt;p&gt;It sure doesn't show any detail, but there is some sign that this is a human being.
+If you squint you can make out a flesh-tinted blob around the center. Perhaps
+that's a hint of shoulders on the lower half? I was quite surprised that anything
+of remote resemblance to a person came out of this. Of course this isn't even
+close to what we're looking for, and fortunately, we can still do better.&lt;/p&gt;
+&lt;h1&gt;Getting rid of the junk&lt;/h1&gt;
+&lt;p&gt;If you've swiped through Tinder profiles before, you'll know there's a lot of
+variation in the pictures. Some are from far away, some at strange angles, 
+sometimes it's a group shot, or maybe there isn't even a person in it! Sorting 
+out all the awful pictures that are ruining my average is going to help out a
+lot. If only we could check that each picture being averaged is of a person.
+Well, thankfully face detection is something that is widely studied and quite 
+easy to use. OpenCV has a cascade classifier&lt;sup id="fnref-cascade_classifier"&gt;&lt;a class="footnote-ref" href="#fn-cascade_classifier"&gt;2&lt;/a&gt;&lt;/sup&gt; for detecting 
+objects and even comes with some pre-trained cascades for face detection.
+Awesome! Here's the meat of what I'm doing to find faces in an image:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;face_cascade&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;cv2&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;CascadeClassifier&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt; &lt;span class="n"&gt;haar_map&lt;/span&gt; &lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;img&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;cv2&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;imread&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt; &lt;span class="n"&gt;path&lt;/span&gt; &lt;span class="p"&gt;)&lt;/span&gt; 
+&lt;span class="n"&gt;gray&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;cv2&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;cvtColor&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;img&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;cv2&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;COLOR_BGR2GRAY&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;faces&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;face_cascade&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;detectMultiScale&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+  &lt;span class="n"&gt;gray&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+  &lt;span class="n"&gt;scaleFactor&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mf"&gt;1.2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+  &lt;span class="n"&gt;minNeighbors&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+  &lt;span class="n"&gt;minSize&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;30&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;30&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
+  &lt;span class="n"&gt;flags&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;cv2&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;cv&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;CV_HAAR_SCALE_IMAGE&lt;/span&gt;
+&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Once we get the faces in the image, it's time to check that it's an acceptable 
+picture There's only two criteria I'm going to match for:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Is there exactly one face in the photo?&lt;/li&gt;
+&lt;li&gt;If so, is it at least 100x100px large?&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;If both of these criteria are met, great! We'll average it. If not, just ignore it.
+Here's what happens after sorting through the same profile pictures as before:&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Detected faces" src="/detect_avg.png"&gt;&lt;/p&gt;
+&lt;p&gt;This is after sorting through the same 62820 profiles as before. The detection 
+method narrowed it down to 21001 positive samples (that's 33.56%).
+And, ehh, It's better, a little. There's more shape to the head. There's some sign of a chest
+and neck now too. At the very least, I'd say this is good enough evidence to say
+that the average girl on Tinder is white (or our cascade is biased!). But we 
+still don't have any features, let alone something that can be identified as a
+face!&lt;/p&gt;
+&lt;h1&gt;Bringing her into focus&lt;/h1&gt;
+&lt;p&gt;There's one thing that the cascade classifier is doing that is making the average 
+only 'meh' and that is that it doesn't care about the location of identified faces.
+The classifier will detect a face anywhere in the image, but I want something 
+like a portrait-like result. This means that just a mere detection is still going
+to result in a blurry, out of focus, image. Clearly we need some better cooperation.
+The classifier does report the location of each object it detects. Let's try
+ scaling each photo to frame only the reported face and average those. This is 
+pretty easy to do with OpenCV using a perspective transform&lt;sup id="fnref-transform"&gt;&lt;a class="footnote-ref" href="#fn-transform"&gt;3&lt;/a&gt;&lt;/sup&gt;. Here's how I do that:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;face&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;float32&lt;/span&gt;&lt;span class="p"&gt;([[&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;],[&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="n"&gt;w&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt;
+                   &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="n"&gt;h&lt;/span&gt;&lt;span class="p"&gt;],[&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="n"&gt;w&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="n"&gt;h&lt;/span&gt;&lt;span class="p"&gt;]])&lt;/span&gt;
+&lt;span class="n"&gt;frame&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;float32&lt;/span&gt;&lt;span class="p"&gt;([[&lt;/span&gt;&lt;span class="n"&gt;pic_w&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;pic_w&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt;
+                    &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;pic_h&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;pic_w&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt;
+                    &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;pic_w&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;pic_h&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt;
+                    &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;pic_h&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;pic_h&lt;/span&gt;&lt;span class="p"&gt;]])&lt;/span&gt; 
+&lt;span class="n"&gt;M&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;cv2&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;getPerspectiveTransform&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;face&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;frame&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;new_img&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;cv2&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;warpPerspective&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;img&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;M&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;pic_w&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;pic_h&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Here, I'm taking the bounding box of the face and having OpenCV get the transform
+required to make it be framed in the full picture. I then apply that transform 
+to the image, and carry on with the averaging from there. After that, we get a
+nice picture:&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Detected and transformed" src="/full_101.png"&gt;&lt;/p&gt;
+&lt;p&gt;Now that's pretty good! This is for the same 21001 positive samples as before, 
+only now they've been centered properly. &lt;/p&gt;
+&lt;h1&gt;An actual average&lt;/h1&gt;
+&lt;p&gt;There's still a problem with the averaging, however. If we make a comparison of
+different averages for different numbers of samples, we can see they don't 
+really change after a certain point.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Comparison" src="/compare_small.png"&gt;&lt;/p&gt;
+&lt;p&gt;The problem is that our profile images are only 8-bit JPEGs and are being 
+processed as such. This means that we're going to have trouble with precision
+when we start getting close to 256 samples. That's clearly not good enough when
+there's more than 10000 images to be combined! To counter this, I could covert 
+all the images to some higher bit-depth, but instead I've chosen to simply save 
+the average of every 100 positive samples and then average all of those. In 
+addition, I'm also using a numpy ndarray with a type of float64 to hold all of 
+my averaging data, so there shouldn't be any concern for precision issues in this
+method.
+After all this, we get our girl:&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Detected" src="/trans_avg.png"&gt;&lt;/p&gt;
+&lt;p&gt;It's pretty clear that there is a lot less noise than the last attempt, which 
+we should expect from so many samples. Even more, we can even use our cascade to
+see if the result is identifiable as a face:&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Detected" src="/detected.png"&gt;&lt;/p&gt;
+&lt;p&gt;And it turns out it is! That shouldn't be too surprising seeing as it's 
+just an average of positive matches. Though it's still evidence to show that
+the bounding boxes on the detected faces were consistent enough to provide a strong
+average.&lt;/p&gt;
+&lt;div class="footnote"&gt;
+&lt;hr&gt;
+&lt;ol&gt;
+&lt;li id="fn-tinder_pyro"&gt;
+&lt;p&gt;&lt;a href="https://github.com/nneal/tinder_pyro"&gt;Tinder Pyro&lt;/a&gt;, an unofficial 
+ruby wrapper for the Tinder API.&amp;#160;&lt;a class="footnote-backref" href="#fnref-tinder_pyro" title="Jump back to footnote 1 in the text"&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id="fn-cascade_classifier"&gt;
+&lt;p&gt;&lt;a href="http://docs.opencv.org/modules/objdetect/doc/cascade_classification.html"&gt;OpenCV Cascade Classification&lt;/a&gt;&amp;#160;&lt;a class="footnote-backref" href="#fnref-cascade_classifier" title="Jump back to footnote 2 in the text"&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id="fn-transform"&gt;
+&lt;p&gt;OpenCV's &lt;a href="http://docs.opencv.org/modules/imgproc/doc/geometric_transformations.html#getperspectivetransform"&gt;getPerspectiveTransform&lt;/a&gt; applied with &lt;a href="http://docs.opencv.org/modules/imgproc/doc/geometric_transformations.html#warpperspective"&gt;warpPerspective&lt;/a&gt;&amp;#160;&lt;a class="footnote-backref" href="#fnref-transform" title="Jump back to footnote 3 in the text"&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;</content></entry><entry><title>Meet Emily: The Average Tinder Girl</title><link href="/meet-emily.html" rel="alternate"></link><published>2015-01-08T00:00:00-06:00</published><updated>2015-01-08T00:00:00-06:00</updated><author><name>Dan Kolbman</name></author><id>tag:None,2015-01-08:/meet-emily.html</id><summary type="html">&lt;p&gt;Here I go through some data I've collected from Tinder biographies. If you're 
+interested in how the data was collected, or you want to analyze or collect
+your own data, you can get the scripts and some sample data I've collected
+&lt;a href="https://github.com/dankolbman/CleverTind"&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;If you're interested in how the composite average was generated, check out
+&lt;a href="/face-avg.html"&gt;Picturing the Average Tinder Girl&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Emily" src="/trans_avg.png"&gt;&lt;/p&gt;
+&lt;p&gt;Meet Emily. A 21 year old, white, brunette who uses Tinder. She drinks coffee and
+enjoys music. She likes wine almost as much as she does beer, and she favors
+whiskey as far as liquor is concerned. She is the product of 100,065 Tinder profiles.&lt;/p&gt;
+&lt;h2&gt;Collecting the data&lt;/h2&gt;
+&lt;p&gt;It turns out that the Tinder API is pretty easy to exploit. It only requires a 
+Facebook account with a connected Tinder app to verify and get a auth token. 
+After that, all the calls used by the actual app become available to us and we're
+free to wreck whatever havoc we like.&lt;/p&gt;
+&lt;p&gt;My bot for data collection is pretty simple. It requests suggestions from Tinder,
+which will return a short list of profiles. Then the bot runs through the list and 
+saves all the JSON data for the users, 'swiping' them along the way so they don't
+come back in the future. It's all rinse and repeat from here, and after a while,
+you end up with a bunch of profile data.&lt;/p&gt;
+&lt;p&gt;Profile data consists of a bunch of fields: Name, age, pictures, last activity,
+biography, and more. Below I report some statistics on names, ages, and bio
+data that I've collected from 100,065 profiles.&lt;/p&gt;
+&lt;h2&gt;What's her name&lt;/h2&gt;
+&lt;p&gt;After a quick analysis, the most common name was Emily, followed closely by 
+Sarah.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Names" src="/names.png"&gt;&lt;/p&gt;
+&lt;p&gt;This doesn't include any variations of the names. For example, I found seven 
+variations of Emily: Emilie, Emilee, Emi, Emile, Emili, Emleigh, and Emillie.
+To sort through all of the possible variations would be a pain, and considering 
+each of the top five are all pretty variable, I'll assume that this list is 
+a good representation of the distribution. It might be interesting to inspect 
+each name and look at how many variates each one has, but again, that would 
+require a lot of hand sifting, so I won't do that here.&lt;/p&gt;
+&lt;h2&gt;How old is she&lt;/h2&gt;
+&lt;p&gt;The next obvious question is her age. Well the age distribution of female Tinder
+profiles looks like this:&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Ages" src="/ages.png"&gt;&lt;/p&gt;
+&lt;p&gt;So she's 21 according to the Tinder dates. However, I after inspecting bios, I 
+found something that may challenge this. I looked at the mentions of the numbers
+14-24 on Tinder bios. Now, Tinder users will know that there is often two
+occasions in which a user will mention a number like this. One is when mentioning
+graduating class, ie 'nyu 16'. The other is when the user is correcting the age
+shown on their profile, ie 'I'm actually 18' (I believe this is often due to users 
+lying about their age in order to create a Facebook account when their younger).
+Either way, we could infer something about age from either of these cases. 
+Here's what that distribution looks like across users:&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Numbers" src="/numbers.png"&gt;&lt;/p&gt;
+&lt;p&gt;First thing we can note about this is the sudden drop in frequency when we get 
+to 19. At first glance, I'd say that this is some supporting evidence that the
+mention of these numbers in bios is mostly users mentioning class year. But if 
+we consider that the class of 2018 also corresponds to a demographic of mostly 
+18 year olds. We could either make the conclusion that 'Users tend to state their
+class year in their profile with freshmen being more likely to than seniors' or
+we could just as validly say that 'Users tend to correct their age on their profile
+with 18 year olds doing so the most and 14 year olds the least'. Therefore, it's
+inconclusive as to which statement is correct.&lt;/p&gt;
+&lt;p&gt;But there is one thing that this says that disagrees with the age reported by 
+Tinder, and that's the fact that 18 is mentioned the most. Remember that 18 
+corresponds to an age of 18 by either of the above cases. We should then think 
+that the most common age should be 18, not 19. Of course there's a lot of other 
+things to consider, like users who are 18 feel compelled to list their age. 
+I would conclude that overall, the evidence points to the actual mean age being
+lower than that reported by Tinder, but I'd take it with a grain of salt.&lt;/p&gt;
+&lt;h2&gt;What are her interests&lt;/h2&gt;
+&lt;p&gt;Perhaps the most interesting data we can look at is in the user biographies. First
+off, it's interesting to note that 53% of users had less than five words
+in their bio. It seems like a lot of wasted opportunity there. The distribution 
+shows that the length decays sub exponentially up to about 80 words, where it 
+just dies off (note logarithmic scale).&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Interests" src="/wc.png"&gt;&lt;/p&gt;
+&lt;p&gt;So then, let's look more closely at some details of the biographies. To do this,
+I've looked at the word frequencies and compare them to the number of users as 
+to represent the number of users that use a word in their profile. The actual 
+word per percentage of users might be a little less than this, considering someone
+might use a word multiple times, but I've assumed this unlikely and take it to be 
+a good estimate.&lt;/p&gt;
+&lt;p&gt;My data parser spits out file of words with the number of times that word was 
+used (sorted by use count). I scanned this file to find common words that might
+fit part of a general and correlate them to imply things about the popularity of
+something.&lt;/p&gt;
+&lt;p&gt;For instance, I started by looking at popular interests like the following:&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Interests" src="/interests.png"&gt;&lt;/p&gt;
+&lt;p&gt;Well music is certainly far ahead of anything else. We can conclude that many Tinder
+users enjoy music.  But just 'music' is rather ambiguous. Here are some of the
+more popular genres I could find in the list.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Music Genres" src="/genres.png"&gt;&lt;/p&gt;
+&lt;p&gt;Country comes out with a strong lead with more than twice that of rock. Of course
+country is also often used as a identifier, ie 'I'm just a country gal', but they
+go hand in hand for the most part. Again, this popularity likely comes from one 
+of the major demographics (upstate NY) in the data. Rock and punk could also be
+used as adjectives unrelated to genre as well. Overall, we can get some deeper 
+interpretation of popular genres from this, but it shouldn't be taken too seriously.&lt;/p&gt;
+&lt;h3&gt;Beverages&lt;/h3&gt;
+&lt;p&gt;Coffee was the obvious winner over tea, but surprisingly, beer came out just
+above wine, though still not as popular as coffee.
+&lt;img alt="Beverages" src="/beverages.png"&gt;&lt;/p&gt;
+&lt;p&gt;As for liquor, it was pleasant to find that whiskey trumped all. In fact, the
+others are mentioned so infrequently that I hesitate to call them statistically
+meaningful.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Liquor" src="/liquor.png"&gt;&lt;/p&gt;
+&lt;h3&gt;Sports&lt;/h3&gt;
+&lt;p&gt;Hockey seems like it must be another demographic issue, but it could also be the 
+fact that field hockey is also included in this statistic. 
+&lt;img alt="Sports" src="/sports.png"&gt;&lt;/p&gt;
+&lt;p&gt;Dogs are the clear favorite amongst users, which is not that surprising. If I 
+took the time to train a classifier to identify dogs, I bet I could find a dog 
+in nearly half of all profiles.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Pets" src="/pets.png"&gt;&lt;/p&gt;</summary><content type="html">&lt;p&gt;Here I go through some data I've collected from Tinder biographies. If you're 
+interested in how the data was collected, or you want to analyze or collect
+your own data, you can get the scripts and some sample data I've collected
+&lt;a href="https://github.com/dankolbman/CleverTind"&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;If you're interested in how the composite average was generated, check out
+&lt;a href="/face-avg.html"&gt;Picturing the Average Tinder Girl&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Emily" src="/trans_avg.png"&gt;&lt;/p&gt;
+&lt;p&gt;Meet Emily. A 21 year old, white, brunette who uses Tinder. She drinks coffee and
+enjoys music. She likes wine almost as much as she does beer, and she favors
+whiskey as far as liquor is concerned. She is the product of 100,065 Tinder profiles.&lt;/p&gt;
+&lt;h2&gt;Collecting the data&lt;/h2&gt;
+&lt;p&gt;It turns out that the Tinder API is pretty easy to exploit. It only requires a 
+Facebook account with a connected Tinder app to verify and get a auth token. 
+After that, all the calls used by the actual app become available to us and we're
+free to wreck whatever havoc we like.&lt;/p&gt;
+&lt;p&gt;My bot for data collection is pretty simple. It requests suggestions from Tinder,
+which will return a short list of profiles. Then the bot runs through the list and 
+saves all the JSON data for the users, 'swiping' them along the way so they don't
+come back in the future. It's all rinse and repeat from here, and after a while,
+you end up with a bunch of profile data.&lt;/p&gt;
+&lt;p&gt;Profile data consists of a bunch of fields: Name, age, pictures, last activity,
+biography, and more. Below I report some statistics on names, ages, and bio
+data that I've collected from 100,065 profiles.&lt;/p&gt;
+&lt;h2&gt;What's her name&lt;/h2&gt;
+&lt;p&gt;After a quick analysis, the most common name was Emily, followed closely by 
+Sarah.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Names" src="/names.png"&gt;&lt;/p&gt;
+&lt;p&gt;This doesn't include any variations of the names. For example, I found seven 
+variations of Emily: Emilie, Emilee, Emi, Emile, Emili, Emleigh, and Emillie.
+To sort through all of the possible variations would be a pain, and considering 
+each of the top five are all pretty variable, I'll assume that this list is 
+a good representation of the distribution. It might be interesting to inspect 
+each name and look at how many variates each one has, but again, that would 
+require a lot of hand sifting, so I won't do that here.&lt;/p&gt;
+&lt;h2&gt;How old is she&lt;/h2&gt;
+&lt;p&gt;The next obvious question is her age. Well the age distribution of female Tinder
+profiles looks like this:&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Ages" src="/ages.png"&gt;&lt;/p&gt;
+&lt;p&gt;So she's 21 according to the Tinder dates. However, I after inspecting bios, I 
+found something that may challenge this. I looked at the mentions of the numbers
+14-24 on Tinder bios. Now, Tinder users will know that there is often two
+occasions in which a user will mention a number like this. One is when mentioning
+graduating class, ie 'nyu 16'. The other is when the user is correcting the age
+shown on their profile, ie 'I'm actually 18' (I believe this is often due to users 
+lying about their age in order to create a Facebook account when their younger).
+Either way, we could infer something about age from either of these cases. 
+Here's what that distribution looks like across users:&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Numbers" src="/numbers.png"&gt;&lt;/p&gt;
+&lt;p&gt;First thing we can note about this is the sudden drop in frequency when we get 
+to 19. At first glance, I'd say that this is some supporting evidence that the
+mention of these numbers in bios is mostly users mentioning class year. But if 
+we consider that the class of 2018 also corresponds to a demographic of mostly 
+18 year olds. We could either make the conclusion that 'Users tend to state their
+class year in their profile with freshmen being more likely to than seniors' or
+we could just as validly say that 'Users tend to correct their age on their profile
+with 18 year olds doing so the most and 14 year olds the least'. Therefore, it's
+inconclusive as to which statement is correct.&lt;/p&gt;
+&lt;p&gt;But there is one thing that this says that disagrees with the age reported by 
+Tinder, and that's the fact that 18 is mentioned the most. Remember that 18 
+corresponds to an age of 18 by either of the above cases. We should then think 
+that the most common age should be 18, not 19. Of course there's a lot of other 
+things to consider, like users who are 18 feel compelled to list their age. 
+I would conclude that overall, the evidence points to the actual mean age being
+lower than that reported by Tinder, but I'd take it with a grain of salt.&lt;/p&gt;
+&lt;h2&gt;What are her interests&lt;/h2&gt;
+&lt;p&gt;Perhaps the most interesting data we can look at is in the user biographies. First
+off, it's interesting to note that 53% of users had less than five words
+in their bio. It seems like a lot of wasted opportunity there. The distribution 
+shows that the length decays sub exponentially up to about 80 words, where it 
+just dies off (note logarithmic scale).&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Interests" src="/wc.png"&gt;&lt;/p&gt;
+&lt;p&gt;So then, let's look more closely at some details of the biographies. To do this,
+I've looked at the word frequencies and compare them to the number of users as 
+to represent the number of users that use a word in their profile. The actual 
+word per percentage of users might be a little less than this, considering someone
+might use a word multiple times, but I've assumed this unlikely and take it to be 
+a good estimate.&lt;/p&gt;
+&lt;p&gt;My data parser spits out file of words with the number of times that word was 
+used (sorted by use count). I scanned this file to find common words that might
+fit part of a general and correlate them to imply things about the popularity of
+something.&lt;/p&gt;
+&lt;p&gt;For instance, I started by looking at popular interests like the following:&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Interests" src="/interests.png"&gt;&lt;/p&gt;
+&lt;p&gt;Well music is certainly far ahead of anything else. We can conclude that many Tinder
+users enjoy music.  But just 'music' is rather ambiguous. Here are some of the
+more popular genres I could find in the list.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Music Genres" src="/genres.png"&gt;&lt;/p&gt;
+&lt;p&gt;Country comes out with a strong lead with more than twice that of rock. Of course
+country is also often used as a identifier, ie 'I'm just a country gal', but they
+go hand in hand for the most part. Again, this popularity likely comes from one 
+of the major demographics (upstate NY) in the data. Rock and punk could also be
+used as adjectives unrelated to genre as well. Overall, we can get some deeper 
+interpretation of popular genres from this, but it shouldn't be taken too seriously.&lt;/p&gt;
+&lt;h3&gt;Beverages&lt;/h3&gt;
+&lt;p&gt;Coffee was the obvious winner over tea, but surprisingly, beer came out just
+above wine, though still not as popular as coffee.
+&lt;img alt="Beverages" src="/beverages.png"&gt;&lt;/p&gt;
+&lt;p&gt;As for liquor, it was pleasant to find that whiskey trumped all. In fact, the
+others are mentioned so infrequently that I hesitate to call them statistically
+meaningful.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Liquor" src="/liquor.png"&gt;&lt;/p&gt;
+&lt;h3&gt;Sports&lt;/h3&gt;
+&lt;p&gt;Hockey seems like it must be another demographic issue, but it could also be the 
+fact that field hockey is also included in this statistic. 
+&lt;img alt="Sports" src="/sports.png"&gt;&lt;/p&gt;
+&lt;p&gt;Dogs are the clear favorite amongst users, which is not that surprising. If I 
+took the time to train a classifier to identify dogs, I bet I could find a dog 
+in nearly half of all profiles.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Pets" src="/pets.png"&gt;&lt;/p&gt;</content></entry></feed>
