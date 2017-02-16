@@ -1,3 +1,6 @@
 [submodule "pelican-hyde"]
 	path = pelican-hyde
 	url = git@github.com:dankolbman/pelican-hyde.git
+[submodule "plugins/pelican-ipynb"]
+	path = plugins/pelican-ipynb
+	url = git@github.com:dankolbman/pelican-ipynb.git
