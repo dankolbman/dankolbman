@@ -13,7 +13,7 @@ PLUGINS = ['ipynb']
 
 PATH = 'content'
 ARTICLE_PATHS = ['posts']
-STATIC_PATHS = ['posts']
+STATIC_PATHS = ['posts', 'images']
 
 TIMEZONE = 'America/Chicago'
 
@@ -33,7 +33,8 @@ IPYNB_IGNORE_CSS = True
 IPYNB_USE_META_SUMMARY = False
 
 # Social widget
-SOCIAL = (('github', 'https://github.com/dankolbman'),
+SOCIAL = (('email', 'dan@kolbman.com'),
+          ('github', 'https://github.com/dankolbman'),
           ('globe', 'dankolbman.xyz'))
 
 # Uncomment following line if you want document-relative URLs when developing
