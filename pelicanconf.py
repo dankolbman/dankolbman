@@ -8,8 +8,8 @@ SITEURL = ''
 
 MARKUP = ('md', 'ipynb')
 
-PLUGIN_PATH = './plugins'
-PLUGINS = ['ipynb']
+PLUGIN_PATH = './'
+PLUGINS = ['pelican-ipynb.markup']
 
 PATH = 'content'
 ARTICLE_PATHS = ['posts']

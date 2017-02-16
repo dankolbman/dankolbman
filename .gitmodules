@@ -4,3 +4,6 @@
 [submodule "content/posts/generative_maps"]
 	path = content/posts/generative_maps
 	url = git@github.com:dankolbman/generative_maps.git
+[submodule "pelican-ipynb"]
+	path = pelican-ipynb
+	url = git@github.com:dankolbman/pelican-ipynb.git
