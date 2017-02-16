@@ -1,83 +1,144 @@
-<?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Dan Kolbman</title><link href="/" rel="alternate"></link><link href="/feeds/all.atom.xml" rel="self"></link><id>/</id><updated>2017-02-15T00:00:00-06:00</updated><entry><title>Generative Maps</title><link href="/generative-maps.html" rel="alternate"></link><published>2017-02-15T00:00:00-06:00</published><updated>2017-02-15T00:00:00-06:00</updated><author><name>Dan Kolbman</name></author><id>tag:None,2017-02-15:/generative-maps.html</id><content type="html">&lt;body&gt;
-&lt;div class="cell border-box-sizing text_cell rendered"&gt;
-&lt;div class="prompt input_prompt"&gt;
-&lt;/div&gt;
-&lt;div class="inner_cell"&gt;
-&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
-&lt;h1 id="Generative-Geographical-Maps"&gt;Generative Geographical Maps&lt;a class="anchor-link" href="#Generative-Geographical-Maps"&gt;¶&lt;/a&gt;&lt;/h1&gt;&lt;p&gt;After seeing &lt;a href="http://www-cs-students.stanford.edu/~amitp/game-programming/polygon-map-generation/"&gt;this&lt;/a&gt; post on &lt;a href="http://www-cs-students.stanford.edu/~amitp/game-programming/polygon-map-generation/"&gt;Red Blob Games&lt;/a&gt;, I decided to give my own map generator a go.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing code_cell rendered"&gt;
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<link href="http://gmpg.org/xfn/11" rel="profile">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta http-equiv="content-type" content="text/html; charset=utf-8">
 
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing text_cell rendered"&gt;
-&lt;div class="prompt input_prompt"&gt;
-&lt;/div&gt;
-&lt;div class="inner_cell"&gt;
-&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
-&lt;h2 id="Starting-with-some-(N)-random-points"&gt;Starting with some (N) random points&lt;a class="anchor-link" href="#Starting-with-some-(N)-random-points"&gt;¶&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;I'm going to construct a Voronoi diagram in a similiar way as done here&lt;sup class="footnote-ref" id="fnref-rblob1"&gt;&lt;a href="#fn-rblob1" rel="footnote"&gt;1&lt;/a&gt;&lt;/sup&gt;, minus the relaxation (I hope to get some more 'chaotic' terrain). I'm using the Voronoi implementation in Scipy&lt;sup class="footnote-ref" id="fnref-scipyvoronoi"&gt;&lt;a href="#fn-scipyvoronoi" rel="footnote"&gt;2&lt;/a&gt;&lt;/sup&gt;.&lt;/p&gt;
-&lt;div class="footnotes"&gt;
-&lt;hr&gt;
-&lt;ol&gt;&lt;li id="fn-rblob1"&gt;&lt;p&gt;&lt;a href="http://www-cs-students.stanford.edu/~amitp/game-programming/polygon-map-generation/#polygons"&gt;Polygon Generation from Voronoi Diagrams&lt;/a&gt;&lt;a href="#fnref-rblob1" rev="footnote"&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id="fn-scipyvoronoi"&gt;&lt;p&gt;&lt;a href="http://scipy.github.io/devdocs/generated/scipy.spatial.Voronoi.html"&gt;scipy.spatial.Voronoi&lt;/a&gt;&lt;a href="#fnref-scipyvoronoi" rev="footnote"&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/hr&gt;&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing code_cell rendered"&gt;
-&lt;div class="input"&gt;
-&lt;div class="prompt input_prompt"&gt;In [1308]:&lt;/div&gt;
-&lt;div class="inner_cell"&gt;
-&lt;div class="input_area"&gt;
-&lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;seed&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;55555&lt;/span&gt;
-&lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;random&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;seed&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;seed&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="n"&gt;N&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;5000&lt;/span&gt;
-&lt;span class="c1"&gt;# x, y coordinate pairs&lt;/span&gt;
-&lt;span class="n"&gt;pts&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;random&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;rand&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;N&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="n"&gt;vor&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;Voronoi&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;pts&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="c1"&gt;#voronoi_plot_2d(vor)&lt;/span&gt;
-&lt;span class="n"&gt;plt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;show&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing code_cell rendered"&gt;
+		<!-- Enable responsiveness on mobile devices-->
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing code_cell rendered"&gt;
+		<title>Dan Kolbman</title>
 
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing code_cell rendered"&gt;
+		<!-- CSS -->
+		<link href="//fonts.googleapis.com/" rel="dns-prefetch">
+		<link href="//fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic|Abril+Fatface|PT+Sans:400,400italic,700&amp;subset=latin,latin-ext" rel="stylesheet">
 
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing code_cell rendered"&gt;
+		<link rel="stylesheet" href="./theme/css/poole.css" />
+		<link rel="stylesheet" href="./theme/css/hyde.css" />
+		<link rel="stylesheet" href="./theme/css/syntax.css" />
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
 
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing text_cell rendered"&gt;
-&lt;div class="prompt input_prompt"&gt;
-&lt;/div&gt;
-&lt;div class="inner_cell"&gt;
-&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
-&lt;h2 id="Determining-Biomes-and-Coloring"&gt;Determining Biomes and Coloring&lt;a class="anchor-link" href="#Determining-Biomes-and-Coloring"&gt;¶&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;To start filling in the Voronoi cells, I first define some different biome reigions using a sort of Whittaker classification, although I'll use two dimensionless, normalized variables (I'll call them height and humidity) in place of precipitation and temperature. I also map each biome onto its own hex color to use when coloring in the map.&lt;/p&gt;
-&lt;p&gt;To determine these two variables, I use two perlin noise maps. Here I show the two noise maps and how they combine to produce biomes.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing code_cell rendered"&gt;
+		<!-- RSS -->
+		<link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
+	</head>
 
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing code_cell rendered"&gt;
+	<body class="theme-base-0d">
+<div class="sidebar">
+	<div class="container sidebar-sticky">
+		<div class="sidebar-about">
 
-&lt;div class="output_wrapper"&gt;
-&lt;div class="output"&gt;
-&lt;div class="output_area"&gt;
-&lt;div class="prompt"&gt;&lt;/div&gt;
-&lt;div class="output_png output_subarea "&gt;
-&lt;img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAWUAAACfCAYAAAAh+8hwAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
+			<h1>
+				<a href="/">
+					<img class="profile-picture" src="./images/dankolbman.jpg">
+					Dan Kolbman
+				</a>
+			</h1>
+			<p class="lead"></p>
+			<p class="lead">
+        Hey! I'm Dan Kolbman. I studied Physics at the Rochester Institute
+        of Technology where I created a
+        <a href="https://github.com/dankolbman/BCIM">dynamics simulation</a>
+        using high performance computing to model
+        <a href="/KolbmanCapII.pdf">cancer cell mechanics</a>.
+       </p>
+			<p></p>
+		</div>
+		<nav class="sidebar-nav">
+					<a class="sidebar-nav-item" href="mailto:dan@kolbman.com">
+						<i class="fa fa-envelope"></i>
+					</a>
+					<a class="sidebar-nav-item" href="https://github.com/dankolbman">
+						<i class="fa fa-github"></i>
+					</a>
+					<a class="sidebar-nav-item" href="dankolbman.xyz">
+						<i class="fa fa-globe"></i>
+					</a>
+		</nav>
+	</div>
+</div>		<div class="content container">
+<div class="post">
+	<h1 class="post-title">Generative Maps</h1>
+	<span class="post-date">Wed 15 February 2017</span>
+	<body>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Generative-Geographical-Maps">Generative Geographical Maps<a class="anchor-link" href="#Generative-Geographical-Maps">¶</a></h1><p>After seeing <a href="http://www-cs-students.stanford.edu/~amitp/game-programming/polygon-map-generation/">this</a> post on <a href="http://www-cs-students.stanford.edu/~amitp/game-programming/polygon-map-generation/">Red Blob Games</a>, I decided to give my own map generator a go.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Starting-with-some-(N)-random-points">Starting with some (N) random points<a class="anchor-link" href="#Starting-with-some-(N)-random-points">¶</a></h2><p>I'm going to construct a Voronoi diagram in a similiar way as done here<sup class="footnote-ref" id="fnref-rblob1"><a href="#fn-rblob1" rel="footnote">1</a></sup>, minus the relaxation (I hope to get some more 'chaotic' terrain). I'm using the Voronoi implementation in Scipy<sup class="footnote-ref" id="fnref-scipyvoronoi"><a href="#fn-scipyvoronoi" rel="footnote">2</a></sup>.</p>
+<div class="footnotes">
+<hr>
+<ol><li id="fn-rblob1"><p><a href="http://www-cs-students.stanford.edu/~amitp/game-programming/polygon-map-generation/#polygons">Polygon Generation from Voronoi Diagrams</a><a href="#fnref-rblob1" rev="footnote">↩</a></p></li>
+<li id="fn-scipyvoronoi"><p><a href="http://scipy.github.io/devdocs/generated/scipy.spatial.Voronoi.html">scipy.spatial.Voronoi</a><a href="#fnref-scipyvoronoi" rev="footnote">↩</a></p></li>
+</ol>
+</hr></div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [1308]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">seed</span> <span class="o">=</span> <span class="mi">55555</span>
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+<span class="n">N</span> <span class="o">=</span> <span class="mi">5000</span>
+<span class="c1"># x, y coordinate pairs</span>
+<span class="n">pts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">N</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">vor</span> <span class="o">=</span> <span class="n">Voronoi</span><span class="p">(</span><span class="n">pts</span><span class="p">)</span>
+<span class="c1">#voronoi_plot_2d(vor)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Determining-Biomes-and-Coloring">Determining Biomes and Coloring<a class="anchor-link" href="#Determining-Biomes-and-Coloring">¶</a></h2><p>To start filling in the Voronoi cells, I first define some different biome reigions using a sort of Whittaker classification, although I'll use two dimensionless, normalized variables (I'll call them height and humidity) in place of precipitation and temperature. I also map each biome onto its own hex color to use when coloring in the map.</p>
+<p>To determine these two variables, I use two perlin noise maps. Here I show the two noise maps and how they combine to produce biomes.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAWUAAACfCAYAAAAh+8hwAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
 AAALEgAACxIB0t1+/AAAIABJREFUeJztfVuodFt61ahd96p9/S/nJGk0YsQSIaIPikhMQNGnjiHk
 JV6SPMQnbwERIWC6sSXeMBgN+hAVSTp4gYZI+kmCiiEhEjVKIIFCyD3p7tPn7H/fqva9yof9j7nH
 GvXNVbX/85+qOp35waJuq9aaa605xxxzfN/8ZmM+n6NYsWLFim2H7Wy6AMWKFStW7NEKKBcrVqzY
@@ -444,13 +505,13 @@ W2QFlIsVK1Zsi6yAcrFixYptkRVQLlasWLEtsgLKxYoVK7ZFVkC5WLFixbbICigXK1as2BZZAeVi
 xYoV2yIroFysWLFiW2QFlIsVK1Zsi6yAcrFixYptkRVQLlasWLEtsgLKxYoVK7ZFVkC5WLFixbbI
 CigXK1as2BZZAeVixYoV2yIroFysWLFiW2QFlIsVK1Zsi6yAcrFixYptkf1/xk1kaHGHAJwAAAAA
 SUVORK5CYII=
-"&gt;
-&lt;/img&gt;&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="output_area"&gt;
-&lt;div class="prompt"&gt;&lt;/div&gt;
-&lt;div class="output_png output_subarea "&gt;
-&lt;img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAbMAAAGrCAYAAABKaHlxAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
+">
+</img></div>
+</div>
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAbMAAAGrCAYAAABKaHlxAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
 AAALEgAACxIB0t1+/AAAIABJREFUeJzsvWmsLdl1HvattavqnHPPnd7Ur7tJNptDs6mBokTSdGjZ
 SiwrUX4FCAIzCAxIAmTJIJxBiA0h/pMECvLDQCwEgQUhMSxAsOkklJA4gC04hqxoICVLFBUNFCUO
 bqrn9/r1e+/OZ6i918qPOrvOrl171zn3kcTrDu7Ce7jnnKra49pr+Nbau0hVcUVXdEVXdEVX9HYm
@@ -2722,29 +2783,29 @@ hQoVKlQ48KiUWYUKFSpUOPColFmFChUqVDjwqJRZhQoVKlQ48KiUWYUKFSpUOPColFmFChUqVDjw
 qJRZhQoVKlQ48KiUWYUKFSpUOPColFmFChUqVDjwqJRZhQoVKlQ48KiUWYUKFSpUOPColFmFChUq
 VDjwqJRZhQoVKlQ48KiUWYUKFSpUOPColFmFChUqVDjwqJRZhQoVKlQ48KiUWYUKFSpUOPD4/wJt
 Q8Y93l09AAAAAElFTkSuQmCC
-"&gt;
-&lt;/img&gt;&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing text_cell rendered"&gt;
-&lt;div class="prompt input_prompt"&gt;
-&lt;/div&gt;
-&lt;div class="inner_cell"&gt;
-&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
-&lt;p&gt;I also turn it into closed landforms by applying a radial fourth order drop-off.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing code_cell rendered"&gt;
+">
+</img></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>I also turn it into closed landforms by applying a radial fourth order drop-off.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
 
-&lt;div class="output_wrapper"&gt;
-&lt;div class="output"&gt;
-&lt;div class="output_area"&gt;
-&lt;div class="prompt"&gt;&lt;/div&gt;
-&lt;div class="output_png output_subarea "&gt;
-&lt;img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAbMAAAGrCAYAAABKaHlxAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAbMAAAGrCAYAAABKaHlxAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
 AAALEgAACxIB0t1+/AAAIABJREFUeJzsvWuobUt2HvZVzfXYj/O6j779uN26p9VS622sJ5JfyEJC
 2DIYDIkt4ySCRBCRWE7gOkH/DCYJJhcTCEEkISEJghAIgRD/yA8n1is4kiXrYdGSWurue7tb/dC9
 3X0f59xz9t5rzsqPtcbe3/rWGFW19jnN3jfsAZu91pw1q0ZVjRqPb4y1Viql4IZu6IZu6IZu6L1M
@@ -4618,32 +4679,32 @@ wIABjz0GZTZgwIABAx57DMpswIABAwY89hiU2YABAwYMeOwxKLMBAwYMGPDYY1BmAwYMGDDgsceg
 zAYMGDBgwGOPQZkNGDBgwIDHHoMyGzBgwIABjz0GZTZgwIABAx57DMpswIABAwY89hiU2YABAwYM
 eOwxKLMBAwYMGPDYY1CRZOzXAAAALUlEQVRmAwYMGDDgscegzAYMGDBgwGOPQZkNGDBgwIDHHoMy
 GzBgwIABjz3+P3+quvwekGMsAAAAAElFTkSuQmCC
-"&gt;
-&lt;/img&gt;&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing text_cell rendered"&gt;
-&lt;div class="prompt input_prompt"&gt;
-&lt;/div&gt;
-&lt;div class="inner_cell"&gt;
-&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
-&lt;h2 id="Adding-Cities"&gt;Adding Cities&lt;a class="anchor-link" href="#Adding-Cities"&gt;¶&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Now that there's a relatively nice looking topology, I'll throw in some cities and provinces. I choose biome regions at random place cities according to a distribution that I've come up with (cities aren't as likely to be on the top of a mountain as they are to be on a flat plain). Here's that distribution as a probability as a function of the biome type:&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing code_cell rendered"&gt;
+">
+</img></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Adding-Cities">Adding Cities<a class="anchor-link" href="#Adding-Cities">¶</a></h2><p>Now that there's a relatively nice looking topology, I'll throw in some cities and provinces. I choose biome regions at random place cities according to a distribution that I've come up with (cities aren't as likely to be on the top of a mountain as they are to be on a flat plain). Here's that distribution as a probability as a function of the biome type:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
 
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing code_cell rendered"&gt;
+</div>
+<div class="cell border-box-sizing code_cell rendered">
 
-&lt;div class="output_wrapper"&gt;
-&lt;div class="output"&gt;
-&lt;div class="output_area"&gt;
-&lt;div class="prompt"&gt;&lt;/div&gt;
-&lt;div class="output_png output_subarea "&gt;
-&lt;img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAYMAAAFICAYAAACyS5JlAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAYMAAAFICAYAAACyS5JlAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
 AAALEgAACxIB0t1+/AAAIABJREFUeJzt3XmYXGWZ9/Fvp5ElJAQYEpWwhC0/FJVNFndwGRAZmFFc
 AiICw6uOaEaQV1GQbRwG0AEVBUVEwAVlUAnIJg6LIAiyrze8xgQCCJGEJYASmrx/PKfS1ZVeqs5S
 XV39+1xXrvQ5fc5dTy1d9znP2rNs2TLMzGx8mzDaBTAzs9HnZGBmZk4GZmbmZGBmZjgZmJkZTgZm
@@ -4843,78 +4904,78 @@ jA68hOeVMbNhuJqou+w62gUws7HJdwZdpoqF0c2s+7nNoItkC6P/mLTU5TTSwuifGd1SmdlY4Gqi
 YXQzGx/cZtAlIuJlICRtMNplMbOxx20G3aWKhdHNbBxwMugupS+Mbmbjg5NBd/HC6GaWi5NBF/DC
 6GZWlHsTdQFJU0jtBV4Y3cxycTIwMzN3LTUzMycDMzPDycDMzHAyMDMznAzMzAz4/0nriKlQjgEX
 AAAAAElFTkSuQmCC
-"&gt;
-&lt;/img&gt;&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing code_cell rendered"&gt;
+">
+</img></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
 
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing code_cell rendered"&gt;
-&lt;div class="input"&gt;
-&lt;div class="prompt input_prompt"&gt;In [1319]:&lt;/div&gt;
-&lt;div class="inner_cell"&gt;
-&lt;div class="input_area"&gt;
-&lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;City&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
-    &lt;span class="n"&gt;name&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;'city'&lt;/span&gt;
-    &lt;span class="n"&gt;biomes&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[]&lt;/span&gt;
-    &lt;span class="n"&gt;roads&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[]&lt;/span&gt;
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [1319]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">class</span> <span class="nc">City</span><span class="p">:</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s1">'city'</span>
+    <span class="n">biomes</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">roads</span> <span class="o">=</span> <span class="p">[]</span>
     
-    &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;__init__&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;biomes&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
-        &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;name&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;name&lt;/span&gt;
-        &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;biomes&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;biomes&lt;/span&gt;
-        &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;biomes&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
-            &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;owner&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="bp"&gt;self&lt;/span&gt;
-        &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;connected&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[]&lt;/span&gt;
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">biomes</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">biomes</span> <span class="o">=</span> <span class="n">biomes</span>
+        <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">biomes</span><span class="p">:</span>
+            <span class="n">b</span><span class="o">.</span><span class="n">owner</span> <span class="o">=</span> <span class="bp">self</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connected</span> <span class="o">=</span> <span class="p">[]</span>
         
-    &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;grow&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
-        &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="nb"&gt;range&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;len&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;biomes&lt;/span&gt;&lt;span class="p"&gt;)):&lt;/span&gt;
-            &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;biomes&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;neighbors&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
-                &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;is_water&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="ow"&gt;or&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;outside&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
-                    &lt;span class="k"&gt;continue&lt;/span&gt;
-                &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;owner&lt;/span&gt; &lt;span class="ow"&gt;is&lt;/span&gt; &lt;span class="kc"&gt;None&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
-                    &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;biomes&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;append&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-                    &lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;owner&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="bp"&gt;self&lt;/span&gt;
+    <span class="k">def</span> <span class="nf">grow</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">biomes</span><span class="p">)):</span>
+            <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">biomes</span><span class="p">[</span><span class="n">b</span><span class="p">]</span><span class="o">.</span><span class="n">neighbors</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">n</span><span class="o">.</span><span class="n">is_water</span><span class="p">()</span> <span class="ow">or</span> <span class="n">n</span><span class="o">.</span><span class="n">outside</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="k">if</span> <span class="n">n</span><span class="o">.</span><span class="n">owner</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">biomes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+                    <span class="n">n</span><span class="o">.</span><span class="n">owner</span> <span class="o">=</span> <span class="bp">self</span>
         
-    &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;__repr__&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
-        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="s1"&gt;'&lt; City &lt;/span&gt;&lt;span class="si"&gt;{}&lt;/span&gt;&lt;span class="s1"&gt; &gt;'&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;format&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">'< City </span><span class="si">{}</span><span class="s1"> >'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
     
-&lt;/pre&gt;&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing code_cell rendered"&gt;
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
 
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing code_cell rendered"&gt;
-&lt;div class="input"&gt;
-&lt;div class="prompt input_prompt"&gt;In [1321]:&lt;/div&gt;
-&lt;div class="inner_cell"&gt;
-&lt;div class="input_area"&gt;
-&lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;draw_cities&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;cities&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
-    &lt;span class="n"&gt;c_xy&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;c&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;biomes&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;center&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;c&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;cities&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;values&lt;/span&gt;&lt;span class="p"&gt;()]&lt;/span&gt;
-    &lt;span class="n"&gt;plt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;plot&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="nb"&gt;zip&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;c_xy&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="s1"&gt;'o'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;ms&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;mew&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;mfc&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="kc"&gt;None&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [1321]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">draw_cities</span><span class="p">(</span><span class="n">cities</span><span class="p">):</span>
+    <span class="n">c_xy</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">biomes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">center</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">cities</span><span class="o">.</span><span class="n">values</span><span class="p">()]</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="o">*</span><span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">c_xy</span><span class="p">),</span> <span class="s1">'o'</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">mew</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">mfc</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 
-    &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;c&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;cities&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;items&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
-        &lt;span class="n"&gt;plt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;annotate&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;c&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;biomes&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;center&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;xytext&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
-                     &lt;span class="n"&gt;textcoords&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;'offset points'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-                    &lt;span class="n"&gt;ha&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;'center'&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing code_cell rendered"&gt;
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">cities</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">c</span><span class="o">.</span><span class="n">biomes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">center</span><span class="p">,</span> <span class="n">xytext</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">10</span><span class="p">),</span>
+                     <span class="n">textcoords</span><span class="o">=</span><span class="s1">'offset points'</span><span class="p">,</span>
+                    <span class="n">ha</span><span class="o">=</span><span class="s1">'center'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
 
-&lt;div class="output_wrapper"&gt;
-&lt;div class="output"&gt;
-&lt;div class="output_area"&gt;
-&lt;div class="prompt"&gt;&lt;/div&gt;
-&lt;div class="output_png output_subarea "&gt;
-&lt;img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAbMAAAGrCAYAAABKaHlxAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAbMAAAGrCAYAAABKaHlxAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
 AAALEgAACxIB0t1+/AAAIABJREFUeJzsvWuobUt2HvZVzfXYj/O6j779uN26p9VS622sJ5JfyEJC
 2DIYDIkt4ySCRBCRWE7gOkH/DCYJJhcTCEEkISEJghAIgRD/yA8n1is4kiXrYdGSWurue7tb/dC9
 3X0f59xz9t5rzsqPtcbe3/rWGFW19jnN3jfsAZu91pw1q0ZVjRqPb4y1Viql4IZu6IZu6IZu6L1M
@@ -6877,133 +6938,133 @@ FGc9pspsiimmmGKKsx5TZTbFFFNMMcVZj6kym2KKKaaY4qzHVJlNMcUUU0xx1mOqzKaYYooppjjr
 MVVmU0wxxRRTnPWYKrMppphiiinOekyV2RRTTDHFFGc9pspsiimmmGKKsx5TZTbFFFNMMcVZj6ky
 m2KKKaaY4qzHVJlNMcUUU0xx1mOqzKaYYooppjjrMVVmU0wxxRRTnPWYKrMppphiiinOekyV2RRT
 TDHFFGc9pspsiimmmGKKsx7/P3ObAsd63AGHAAAAAElFTkSuQmCC
-"&gt;
-&lt;/img&gt;&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing code_cell rendered"&gt;
-&lt;div class="input"&gt;
-&lt;div class="prompt input_prompt"&gt;In [1323]:&lt;/div&gt;
-&lt;div class="inner_cell"&gt;
-&lt;div class="input_area"&gt;
-&lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;search_city_BFS&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;v&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;w&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;mcount&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;500&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
-    &lt;span class="n"&gt;Q&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt; &lt;span class="n"&gt;v&lt;/span&gt; &lt;span class="p"&gt;]&lt;/span&gt;
-    &lt;span class="n"&gt;prev&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;{}&lt;/span&gt;
-    &lt;span class="n"&gt;visited&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt; &lt;span class="n"&gt;v&lt;/span&gt; &lt;span class="p"&gt;]&lt;/span&gt;
-    &lt;span class="c1"&gt;# Don't allow crazy stuff&lt;/span&gt;
-    &lt;span class="n"&gt;count&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;
-    &lt;span class="k"&gt;while&lt;/span&gt; &lt;span class="n"&gt;Q&lt;/span&gt; &lt;span class="ow"&gt;and&lt;/span&gt; &lt;span class="n"&gt;count&lt;/span&gt; &lt;span class="o"&gt;&lt;&lt;/span&gt; &lt;span class="n"&gt;mcount&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
-        &lt;span class="n"&gt;count&lt;/span&gt; &lt;span class="o"&gt;+=&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;
-        &lt;span class="c1"&gt;# Next node&lt;/span&gt;
-        &lt;span class="n"&gt;u&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;Q&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;pop&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-        &lt;span class="c1"&gt;# If found end city in current path&lt;/span&gt;
-        &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;u&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="n"&gt;w&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
-            &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;prev&lt;/span&gt;
+">
+</img></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [1323]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">search_city_BFS</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">mcount</span><span class="o">=</span><span class="mi">500</span><span class="p">):</span>
+    <span class="n">Q</span> <span class="o">=</span> <span class="p">[</span> <span class="n">v</span> <span class="p">]</span>
+    <span class="n">prev</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">visited</span> <span class="o">=</span> <span class="p">[</span> <span class="n">v</span> <span class="p">]</span>
+    <span class="c1"># Don't allow crazy stuff</span>
+    <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="n">Q</span> <span class="ow">and</span> <span class="n">count</span> <span class="o"><</span> <span class="n">mcount</span><span class="p">:</span>
+        <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="c1"># Next node</span>
+        <span class="n">u</span> <span class="o">=</span> <span class="n">Q</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="c1"># If found end city in current path</span>
+        <span class="k">if</span> <span class="n">u</span> <span class="o">==</span> <span class="n">w</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">prev</span>
         
-        &lt;span class="n"&gt;next_n&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;sorted&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;u&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;neighbors&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;key&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="k"&gt;lambda&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nb"&gt;abs&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;height&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;u&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;height&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+        <span class="n">next_n</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">neighbors</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">b</span><span class="p">:</span> <span class="nb">abs</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">height</span> <span class="o">-</span> <span class="n">u</span><span class="o">.</span><span class="n">height</span><span class="p">))</span>
 
-        &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;next_n&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
-            &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="ow"&gt;not&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;visited&lt;/span&gt; &lt;span class="ow"&gt;and&lt;/span&gt; &lt;span class="ow"&gt;not&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;is_water&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
-                &lt;span class="n"&gt;visited&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;append&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-                &lt;span class="n"&gt;prev&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;u&lt;/span&gt;
-                &lt;span class="c1"&gt;# Add a new path to the queue with next neighbor at end&lt;/span&gt;
-                &lt;span class="n"&gt;Q&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;append&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">next_n</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">visited</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">n</span><span class="o">.</span><span class="n">is_water</span><span class="p">():</span>
+                <span class="n">visited</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+                <span class="n">prev</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">u</span>
+                <span class="c1"># Add a new path to the queue with next neighbor at end</span>
+                <span class="n">Q</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
     
-&lt;/pre&gt;&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing code_cell rendered"&gt;
-&lt;div class="input"&gt;
-&lt;div class="prompt input_prompt"&gt;In [1324]:&lt;/div&gt;
-&lt;div class="inner_cell"&gt;
-&lt;div class="input_area"&gt;
-&lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;Road&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
-    &lt;span class="n"&gt;path&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[]&lt;/span&gt;
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [1324]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">class</span> <span class="nc">Road</span><span class="p">:</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="p">[]</span>
     
-    &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;__init__&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;path&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
-        &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;path&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;path&lt;/span&gt;
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">path</span>
         
-    &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;__repr__&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
-        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="s1"&gt;'&lt; Road &lt;/span&gt;&lt;span class="si"&gt;{}&lt;/span&gt;&lt;span class="s1"&gt; long &gt;'&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;format&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;len&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;path&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing code_cell rendered"&gt;
-&lt;div class="input"&gt;
-&lt;div class="prompt input_prompt"&gt;In [1325]:&lt;/div&gt;
-&lt;div class="inner_cell"&gt;
-&lt;div class="input_area"&gt;
-&lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;road_to&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;start&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;goal&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;biomes&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;mcount&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;1000&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
-    &lt;span class="n"&gt;route&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;search_city_BFS&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;start&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;goal&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;mcount&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-    &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="ow"&gt;not&lt;/span&gt; &lt;span class="n"&gt;route&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
-        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="kc"&gt;None&lt;/span&gt;
-    &lt;span class="n"&gt;path&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt; &lt;span class="n"&gt;route&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;goal&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;  &lt;span class="p"&gt;]&lt;/span&gt;
-    &lt;span class="k"&gt;while&lt;/span&gt; &lt;span class="ow"&gt;not&lt;/span&gt; &lt;span class="n"&gt;path&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="n"&gt;start&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
-        &lt;span class="n"&gt;path&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;append&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;route&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;path&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;]])&lt;/span&gt;
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">'< Road </span><span class="si">{}</span><span class="s1"> long >'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [1325]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">road_to</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">goal</span><span class="p">,</span> <span class="n">biomes</span><span class="p">,</span> <span class="n">mcount</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
+    <span class="n">route</span> <span class="o">=</span> <span class="n">search_city_BFS</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">goal</span><span class="p">,</span> <span class="n">mcount</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">route</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="p">[</span> <span class="n">route</span><span class="p">[</span><span class="n">goal</span><span class="p">]</span>  <span class="p">]</span>
+    <span class="k">while</span> <span class="ow">not</span> <span class="n">path</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">start</span><span class="p">:</span>
+        <span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">route</span><span class="p">[</span><span class="n">path</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]])</span>
 
-    &lt;span class="n"&gt;path&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;insert&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;goal&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;Road&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;path&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing code_cell rendered"&gt;
-&lt;div class="input"&gt;
-&lt;div class="prompt input_prompt"&gt;In [1326]:&lt;/div&gt;
-&lt;div class="inner_cell"&gt;
-&lt;div class="input_area"&gt;
-&lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;draw_road&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;road&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
-    &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;center&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;road&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;path&lt;/span&gt; &lt;span class="p"&gt;]&lt;/span&gt;
-    &lt;span class="n"&gt;y&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;center&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;road&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;path&lt;/span&gt; &lt;span class="p"&gt;]&lt;/span&gt;
-    &lt;span class="n"&gt;plt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;plot&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;c&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;sns&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;xkcd_rgb&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;'faded red'&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing code_cell rendered"&gt;
-&lt;div class="input"&gt;
-&lt;div class="prompt input_prompt"&gt;In [1332]:&lt;/div&gt;
-&lt;div class="inner_cell"&gt;
-&lt;div class="input_area"&gt;
-&lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;plt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;figure&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;figsize&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;7&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;7&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+    <span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">goal</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Road</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [1326]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">draw_road</span><span class="p">(</span><span class="n">road</span><span class="p">):</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="p">[</span> <span class="n">i</span><span class="o">.</span><span class="n">center</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">road</span><span class="o">.</span><span class="n">path</span> <span class="p">]</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="p">[</span> <span class="n">i</span><span class="o">.</span><span class="n">center</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">road</span><span class="o">.</span><span class="n">path</span> <span class="p">]</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">sns</span><span class="o">.</span><span class="n">xkcd_rgb</span><span class="p">[</span><span class="s1">'faded red'</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [1332]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span><span class="mi">7</span><span class="p">))</span>
 
-&lt;span class="n"&gt;draw_biomes&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;biomes&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="nb"&gt;range&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;len&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;cities&lt;/span&gt;&lt;span class="p"&gt;)):&lt;/span&gt;
-    &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;j&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="nb"&gt;range&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
-        &lt;span class="n"&gt;start&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;list&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;cities&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;values&lt;/span&gt;&lt;span class="p"&gt;())[&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;biomes&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
-        &lt;span class="n"&gt;goal&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;list&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;cities&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;values&lt;/span&gt;&lt;span class="p"&gt;())[&lt;/span&gt;&lt;span class="n"&gt;j&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;biomes&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
-        &lt;span class="n"&gt;r&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;road_to&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;start&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;goal&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;biomes&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;600&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-        &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;r&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
-            &lt;span class="nb"&gt;list&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;cities&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;values&lt;/span&gt;&lt;span class="p"&gt;())[&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;roads&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;append&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;r&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-            &lt;span class="nb"&gt;list&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;cities&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;values&lt;/span&gt;&lt;span class="p"&gt;())[&lt;/span&gt;&lt;span class="n"&gt;j&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;roads&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;append&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;r&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-            &lt;span class="n"&gt;draw_road&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;r&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+<span class="n">draw_biomes</span><span class="p">(</span><span class="n">biomes</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">cities</span><span class="p">)):</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span><span class="p">):</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">cities</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">biomes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">goal</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">cities</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">biomes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">road_to</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">goal</span><span class="p">,</span> <span class="n">biomes</span><span class="p">,</span> <span class="mi">600</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">r</span><span class="p">:</span>
+            <span class="nb">list</span><span class="p">(</span><span class="n">cities</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">roads</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+            <span class="nb">list</span><span class="p">(</span><span class="n">cities</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">roads</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+            <span class="n">draw_road</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
             
             
-&lt;span class="n"&gt;draw_cities&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;cities&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+<span class="n">draw_cities</span><span class="p">(</span><span class="n">cities</span><span class="p">)</span>
 
-&lt;span class="n"&gt;plt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;gca&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;set_aspect&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="n"&gt;plt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;axis&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'off'&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="n"&gt;plt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;xlim&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="n"&gt;plt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;ylim&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="n"&gt;plt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;show&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="output_wrapper"&gt;
-&lt;div class="output"&gt;
-&lt;div class="output_area"&gt;
-&lt;div class="prompt"&gt;&lt;/div&gt;
-&lt;div class="output_png output_subarea "&gt;
-&lt;img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAbMAAAGrCAYAAABKaHlxAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
+<span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">'off'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAbMAAAGrCAYAAABKaHlxAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
 AAALEgAACxIB0t1+/AAAIABJREFUeJzsvWuobUt2HvZVzfXYj/O6j779uN26p9VS622sJ5JfyEJC
 2DIYDIkt4ySCRBCRWE7gOkH/DCYJJhcTCEEkISEJghAIgRD/yA8n1is4kiXrYdGSWurue7tb/dC9
 3X0f59xz9t5rzsqPtcbe3/rWGFW19jnN3jfsAZu91pw1q0ZVjRqPb4y1Viql4IZu6IZu6IZu6L1M
@@ -9075,42 +9136,42 @@ wqxHjx49epx59MKsR48ePXqcefTCrEePHj16nHn0wqxHjx49epx59MKsR48ePXqcefTCrEePHj16
 nHn0wqxHjx49epx59MKsR48ePXqcefTCrEePHj16nHn0wqxHjx49epx59MKsR48ePXqcefTCrEeP
 Hj16nHn0wqxHjx49epx59MKsR48ePXqcefTCrEePHj16nHn0wqxHjx49epx59MKsR48ePXqcefTC
 rEePHj16nHn0wqxHjx49epx5/H+cx9YrBPv3vwAAAABJRU5ErkJggg==
-"&gt;
-&lt;/img&gt;&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing code_cell rendered"&gt;
+">
+</img></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
 
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing code_cell rendered"&gt;
-&lt;div class="input"&gt;
-&lt;div class="prompt input_prompt"&gt;In [1306]:&lt;/div&gt;
-&lt;div class="inner_cell"&gt;
-&lt;div class="input_area"&gt;
-&lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;plt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;figure&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;figsize&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;7&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;7&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [1306]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span><span class="mi">7</span><span class="p">))</span>
 
 
 
-&lt;span class="n"&gt;draw_biomes&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;biomes&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="n"&gt;draw_provinces&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;cities&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="n"&gt;draw_cities&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;cities&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="n"&gt;plt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;gca&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;set_aspect&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="n"&gt;plt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;axis&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'off'&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="n"&gt;plt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;xlim&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="n"&gt;plt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;ylim&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="n"&gt;plt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;show&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="output_wrapper"&gt;
-&lt;div class="output"&gt;
-&lt;div class="output_area"&gt;
-&lt;div class="prompt"&gt;&lt;/div&gt;
-&lt;div class="output_png output_subarea "&gt;
-&lt;img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAbMAAAGrCAYAAABKaHlxAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
+<span class="n">draw_biomes</span><span class="p">(</span><span class="n">biomes</span><span class="p">)</span>
+<span class="n">draw_provinces</span><span class="p">(</span><span class="n">cities</span><span class="p">)</span>
+<span class="n">draw_cities</span><span class="p">(</span><span class="n">cities</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">'off'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAbMAAAGrCAYAAABKaHlxAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
 AAALEgAACxIB0t1+/AAAIABJREFUeJzsvWmwZclxHvZl1bn3bd39uhszmAUzmB4AQ2IbmitmYJAi
 zU00CZgENwmWFSIlhS1adIRDhq0fdjiscFgOya1gUKSk8A+BDJuWSdCUKZoKWyRBgCQgegySAEiQ
 WAYgpgHMvvX2+m33VPrHvfle3ryZdeq+bvH1KF5GvLjvnlOnKk9VVi5f5jmXmBkndEIndEIndEKv
@@ -11542,14 +11603,14 @@ oXD0KGdWKBQKhaNHObNCoVAoHD3KmRUKhULh6FHOrFAoFApHj3JmhUKhUDh6lDMrFAqFwtGjnFmh
 UCgUjh7lzAqFQqFw9ChnVigUCoWjRzmzQqFQKBw9ypkVCoVC4ehRzqxQKBQKR49yZoVCoVA4epQz
 KxQKhcLRo5xZoVAoFI4e5cwKhUKhcPQoZ1YoFAqFo0c5s0KhUCgcPcqZFQqFQuHoUc6sUCgUCkeP
 /wekD1tsRPo9CQAAAABJRU5ErkJggg==
-"&gt;
-&lt;/img&gt;&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/body&gt;
-&lt;script type="text/javascript"&gt;if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
+">
+</img></div>
+</div>
+</div>
+</div>
+</div>
+</body>
+<script type="text/javascript">if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
     var mathjaxscript = document.createElement('script');
     mathjaxscript.id = 'mathjaxscript_pelican_#%@#$@#';
     mathjaxscript.type = 'text/javascript';
@@ -11575,495 +11636,9 @@ KxQKhcLRo5xZoVAoFI4e5cwKhUKhcPQoZ1YoFAqFo0c5s0KhUCgcPcqZFQqFQuHoUc6sUCgUCkeP
         "}); ";
     (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
 }
-&lt;/script&gt;
-</content><category term="notebook"></category></entry><entry><title>Picturing the Average Tinder Girl</title><link href="/face-avg.html" rel="alternate"></link><published>2015-01-08T00:00:00-06:00</published><updated>2015-01-08T00:00:00-06:00</updated><author><name>Dan Kolbman</name></author><id>tag:None,2015-01-08:/face-avg.html</id><summary type="html">&lt;p&gt;In this article, I'm going to discuss the steps I took to get an image of the 
-average Tinder girl. If you're also interested in a general analysis of the 
-average Tinder girl's profile, make sure to &lt;a href="/meet-emily.html"&gt;Meet Emily: The Average Tinder 
-Girl&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;You can get the scripts and the data I've collected &lt;a href="https://github.com/dankolbman/CleverTind"&gt;here&lt;/a&gt;.&lt;/p&gt;
-&lt;h1&gt;The Bot&lt;/h1&gt;
-&lt;p&gt;Tinder is a simple dating app that has become quite popular, popular enough to
-attract bot accounts advertising purposes. Users of Tinder will be certainly be 
-familiar with the bots that spam simple ads as well as those that semi-intelligently
-respond to conversation leading into a more convincing ad. After dealing with 
-these bots myself, I was intrigued by how I might go about making my own bot for
-entertainment purposes. It turns out that it's actually relatively easy. The 
-Tinder API only requires a Facebook authentication token of an account with an 
-active Tinder app to retrieve a token for Tinder's API. After that, the Tinder
-API is wide open. There's even a couple unofficial wrappers available, I'm using
-Tinder Pyro &lt;sup id="fnref-tinder_pyro"&gt;&lt;a class="footnote-ref" href="#fn-tinder_pyro"&gt;1&lt;/a&gt;&lt;/sup&gt;.&lt;/p&gt;
-&lt;p&gt;After some preliminary fooling around, the treasure trove of data soon became 
-evident. I wasn't sure what I was going to do with it, but I had my bot
-downloading and storing profile data anyway. After a week I had a couple gigs of
-data and by the time I figured what to do with it all, I had gone through over 
-a hundred-thousand profiles. What was I going to do with all that? It seemed 
-pretty obvious. Let's construct the average Tinder girl! So then...&lt;/p&gt;
-&lt;h1&gt;What does she look like?&lt;/h1&gt;
-&lt;p&gt;With all those photos, we should be able to build up some idea of what this girl
-looks like. Well a quick and dirty attempt at getting an image of our girl is to
-blindly average all the profile pictures I've collected. Here's what I got after
-adding 62820 primary profile photos together:&lt;/p&gt;
-&lt;p&gt;&lt;img alt="Detected" src="/posts/faceavg/prof_avg.png"&gt;&lt;/p&gt;
-&lt;p&gt;It sure doesn't show any detail, but there is some sign that this is a human being.
-If you squint you can make out a flesh-tinted blob around the center. Perhaps
-that's a hint of shoulders on the lower half? I was quite surprised that anything
-of remote resemblance to a person came out of this. Of course this isn't even
-close to what we're looking for, and fortunately, we can still do better.&lt;/p&gt;
-&lt;h1&gt;Getting rid of the junk&lt;/h1&gt;
-&lt;p&gt;If you've swiped through Tinder profiles before, you'll know there's a lot of
-variation in the pictures. Some are from far away, some at strange angles, 
-sometimes it's a group shot, or maybe there isn't even a person in it! Sorting 
-out all the awful pictures that are ruining my average is going to help out a
-lot. If only we could check that each picture being averaged is of a person.
-Well, thankfully face detection is something that is widely studied and quite 
-easy to use. OpenCV has a cascade classifier&lt;sup id="fnref-cascade_classifier"&gt;&lt;a class="footnote-ref" href="#fn-cascade_classifier"&gt;2&lt;/a&gt;&lt;/sup&gt; for detecting 
-objects and even comes with some pre-trained cascades for face detection.
-Awesome! Here's the meat of what I'm doing to find faces in an image:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;face_cascade&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;cv2&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;CascadeClassifier&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt; &lt;span class="n"&gt;haar_map&lt;/span&gt; &lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="n"&gt;img&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;cv2&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;imread&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt; &lt;span class="n"&gt;path&lt;/span&gt; &lt;span class="p"&gt;)&lt;/span&gt; 
-&lt;span class="n"&gt;gray&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;cv2&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;cvtColor&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;img&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;cv2&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;COLOR_BGR2GRAY&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="n"&gt;faces&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;face_cascade&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;detectMultiScale&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
-  &lt;span class="n"&gt;gray&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-  &lt;span class="n"&gt;scaleFactor&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mf"&gt;1.2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-  &lt;span class="n"&gt;minNeighbors&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-  &lt;span class="n"&gt;minSize&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;30&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;30&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
-  &lt;span class="n"&gt;flags&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;cv2&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;cv&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;CV_HAAR_SCALE_IMAGE&lt;/span&gt;
-&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
+</script>
 
-
-&lt;p&gt;Once we get the faces in the image, it's time to check that it's an acceptable 
-picture There's only two criteria I'm going to match for:&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;Is there exactly one face in the photo?&lt;/li&gt;
-&lt;li&gt;If so, is it at least 100x100px large?&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;If both of these criteria are met, great! We'll average it. If not, just ignore it.
-Here's what happens after sorting through the same profile pictures as before:&lt;/p&gt;
-&lt;p&gt;&lt;img alt="Detected faces" src="/detect_avg.png"&gt;&lt;/p&gt;
-&lt;p&gt;This is after sorting through the same 62820 profiles as before. The detection 
-method narrowed it down to 21001 positive samples (that's 33.56%).
-And, ehh, It's better, a little. There's more shape to the head. There's some sign of a chest
-and neck now too. At the very least, I'd say this is good enough evidence to say
-that the average girl on Tinder is white (or our cascade is biased!). But we 
-still don't have any features, let alone something that can be identified as a
-face!&lt;/p&gt;
-&lt;h1&gt;Bringing her into focus&lt;/h1&gt;
-&lt;p&gt;There's one thing that the cascade classifier is doing that is making the average 
-only 'meh' and that is that it doesn't care about the location of identified faces.
-The classifier will detect a face anywhere in the image, but I want something 
-like a portrait-like result. This means that just a mere detection is still going
-to result in a blurry, out of focus, image. Clearly we need some better cooperation.
-The classifier does report the location of each object it detects. Let's try
- scaling each photo to frame only the reported face and average those. This is 
-pretty easy to do with OpenCV using a perspective transform&lt;sup id="fnref-transform"&gt;&lt;a class="footnote-ref" href="#fn-transform"&gt;3&lt;/a&gt;&lt;/sup&gt;. Here's how I do that:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;face&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;float32&lt;/span&gt;&lt;span class="p"&gt;([[&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;],[&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="n"&gt;w&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt;
-                   &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="n"&gt;h&lt;/span&gt;&lt;span class="p"&gt;],[&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="n"&gt;w&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="n"&gt;h&lt;/span&gt;&lt;span class="p"&gt;]])&lt;/span&gt;
-&lt;span class="n"&gt;frame&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;float32&lt;/span&gt;&lt;span class="p"&gt;([[&lt;/span&gt;&lt;span class="n"&gt;pic_w&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;pic_w&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt;
-                    &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;pic_h&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;pic_w&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt;
-                    &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;pic_w&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;pic_h&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt;
-                    &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;pic_h&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;pic_h&lt;/span&gt;&lt;span class="p"&gt;]])&lt;/span&gt; 
-&lt;span class="n"&gt;M&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;cv2&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;getPerspectiveTransform&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;face&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;frame&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="n"&gt;new_img&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;cv2&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;warpPerspective&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;img&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;M&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;pic_w&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;pic_h&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;Here, I'm taking the bounding box of the face and having OpenCV get the transform
-required to make it be framed in the full picture. I then apply that transform 
-to the image, and carry on with the averaging from there. After that, we get a
-nice picture:&lt;/p&gt;
-&lt;p&gt;&lt;img alt="Detected and transformed" src="/full_101.png"&gt;&lt;/p&gt;
-&lt;p&gt;Now that's pretty good! This is for the same 21001 positive samples as before, 
-only now they've been centered properly. &lt;/p&gt;
-&lt;h1&gt;An actual average&lt;/h1&gt;
-&lt;p&gt;There's still a problem with the averaging, however. If we make a comparison of
-different averages for different numbers of samples, we can see they don't 
-really change after a certain point.&lt;/p&gt;
-&lt;p&gt;&lt;img alt="Comparison" src="/compare_small.png"&gt;&lt;/p&gt;
-&lt;p&gt;The problem is that our profile images are only 8-bit JPEGs and are being 
-processed as such. This means that we're going to have trouble with precision
-when we start getting close to 256 samples. That's clearly not good enough when
-there's more than 10000 images to be combined! To counter this, I could covert 
-all the images to some higher bit-depth, but instead I've chosen to simply save 
-the average of every 100 positive samples and then average all of those. In 
-addition, I'm also using a numpy ndarray with a type of float64 to hold all of 
-my averaging data, so there shouldn't be any concern for precision issues in this
-method.
-After all this, we get our girl:&lt;/p&gt;
-&lt;p&gt;&lt;img alt="Detected" src="/trans_avg.png"&gt;&lt;/p&gt;
-&lt;p&gt;It's pretty clear that there is a lot less noise than the last attempt, which 
-we should expect from so many samples. Even more, we can even use our cascade to
-see if the result is identifiable as a face:&lt;/p&gt;
-&lt;p&gt;&lt;img alt="Detected" src="/detected.png"&gt;&lt;/p&gt;
-&lt;p&gt;And it turns out it is! That shouldn't be too surprising seeing as it's 
-just an average of positive matches. Though it's still evidence to show that
-the bounding boxes on the detected faces were consistent enough to provide a strong
-average.&lt;/p&gt;
-&lt;div class="footnote"&gt;
-&lt;hr&gt;
-&lt;ol&gt;
-&lt;li id="fn-tinder_pyro"&gt;
-&lt;p&gt;&lt;a href="https://github.com/nneal/tinder_pyro"&gt;Tinder Pyro&lt;/a&gt;, an unofficial 
-ruby wrapper for the Tinder API.&amp;#160;&lt;a class="footnote-backref" href="#fnref-tinder_pyro" title="Jump back to footnote 1 in the text"&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;li id="fn-cascade_classifier"&gt;
-&lt;p&gt;&lt;a href="http://docs.opencv.org/modules/objdetect/doc/cascade_classification.html"&gt;OpenCV Cascade Classification&lt;/a&gt;&amp;#160;&lt;a class="footnote-backref" href="#fnref-cascade_classifier" title="Jump back to footnote 2 in the text"&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;li id="fn-transform"&gt;
-&lt;p&gt;OpenCV's &lt;a href="http://docs.opencv.org/modules/imgproc/doc/geometric_transformations.html#getperspectivetransform"&gt;getPerspectiveTransform&lt;/a&gt; applied with &lt;a href="http://docs.opencv.org/modules/imgproc/doc/geometric_transformations.html#warpperspective"&gt;warpPerspective&lt;/a&gt;&amp;#160;&lt;a class="footnote-backref" href="#fnref-transform" title="Jump back to footnote 3 in the text"&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/div&gt;</summary><content type="html">&lt;p&gt;In this article, I'm going to discuss the steps I took to get an image of the 
-average Tinder girl. If you're also interested in a general analysis of the 
-average Tinder girl's profile, make sure to &lt;a href="/meet-emily.html"&gt;Meet Emily: The Average Tinder 
-Girl&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;You can get the scripts and the data I've collected &lt;a href="https://github.com/dankolbman/CleverTind"&gt;here&lt;/a&gt;.&lt;/p&gt;
-&lt;h1&gt;The Bot&lt;/h1&gt;
-&lt;p&gt;Tinder is a simple dating app that has become quite popular, popular enough to
-attract bot accounts advertising purposes. Users of Tinder will be certainly be 
-familiar with the bots that spam simple ads as well as those that semi-intelligently
-respond to conversation leading into a more convincing ad. After dealing with 
-these bots myself, I was intrigued by how I might go about making my own bot for
-entertainment purposes. It turns out that it's actually relatively easy. The 
-Tinder API only requires a Facebook authentication token of an account with an 
-active Tinder app to retrieve a token for Tinder's API. After that, the Tinder
-API is wide open. There's even a couple unofficial wrappers available, I'm using
-Tinder Pyro &lt;sup id="fnref-tinder_pyro"&gt;&lt;a class="footnote-ref" href="#fn-tinder_pyro"&gt;1&lt;/a&gt;&lt;/sup&gt;.&lt;/p&gt;
-&lt;p&gt;After some preliminary fooling around, the treasure trove of data soon became 
-evident. I wasn't sure what I was going to do with it, but I had my bot
-downloading and storing profile data anyway. After a week I had a couple gigs of
-data and by the time I figured what to do with it all, I had gone through over 
-a hundred-thousand profiles. What was I going to do with all that? It seemed 
-pretty obvious. Let's construct the average Tinder girl! So then...&lt;/p&gt;
-&lt;h1&gt;What does she look like?&lt;/h1&gt;
-&lt;p&gt;With all those photos, we should be able to build up some idea of what this girl
-looks like. Well a quick and dirty attempt at getting an image of our girl is to
-blindly average all the profile pictures I've collected. Here's what I got after
-adding 62820 primary profile photos together:&lt;/p&gt;
-&lt;p&gt;&lt;img alt="Detected" src="/posts/faceavg/prof_avg.png"&gt;&lt;/p&gt;
-&lt;p&gt;It sure doesn't show any detail, but there is some sign that this is a human being.
-If you squint you can make out a flesh-tinted blob around the center. Perhaps
-that's a hint of shoulders on the lower half? I was quite surprised that anything
-of remote resemblance to a person came out of this. Of course this isn't even
-close to what we're looking for, and fortunately, we can still do better.&lt;/p&gt;
-&lt;h1&gt;Getting rid of the junk&lt;/h1&gt;
-&lt;p&gt;If you've swiped through Tinder profiles before, you'll know there's a lot of
-variation in the pictures. Some are from far away, some at strange angles, 
-sometimes it's a group shot, or maybe there isn't even a person in it! Sorting 
-out all the awful pictures that are ruining my average is going to help out a
-lot. If only we could check that each picture being averaged is of a person.
-Well, thankfully face detection is something that is widely studied and quite 
-easy to use. OpenCV has a cascade classifier&lt;sup id="fnref-cascade_classifier"&gt;&lt;a class="footnote-ref" href="#fn-cascade_classifier"&gt;2&lt;/a&gt;&lt;/sup&gt; for detecting 
-objects and even comes with some pre-trained cascades for face detection.
-Awesome! Here's the meat of what I'm doing to find faces in an image:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;face_cascade&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;cv2&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;CascadeClassifier&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt; &lt;span class="n"&gt;haar_map&lt;/span&gt; &lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="n"&gt;img&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;cv2&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;imread&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt; &lt;span class="n"&gt;path&lt;/span&gt; &lt;span class="p"&gt;)&lt;/span&gt; 
-&lt;span class="n"&gt;gray&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;cv2&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;cvtColor&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;img&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;cv2&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;COLOR_BGR2GRAY&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="n"&gt;faces&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;face_cascade&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;detectMultiScale&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
-  &lt;span class="n"&gt;gray&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-  &lt;span class="n"&gt;scaleFactor&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mf"&gt;1.2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-  &lt;span class="n"&gt;minNeighbors&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-  &lt;span class="n"&gt;minSize&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;30&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;30&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
-  &lt;span class="n"&gt;flags&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;cv2&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;cv&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;CV_HAAR_SCALE_IMAGE&lt;/span&gt;
-&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;Once we get the faces in the image, it's time to check that it's an acceptable 
-picture There's only two criteria I'm going to match for:&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;Is there exactly one face in the photo?&lt;/li&gt;
-&lt;li&gt;If so, is it at least 100x100px large?&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;If both of these criteria are met, great! We'll average it. If not, just ignore it.
-Here's what happens after sorting through the same profile pictures as before:&lt;/p&gt;
-&lt;p&gt;&lt;img alt="Detected faces" src="/detect_avg.png"&gt;&lt;/p&gt;
-&lt;p&gt;This is after sorting through the same 62820 profiles as before. The detection 
-method narrowed it down to 21001 positive samples (that's 33.56%).
-And, ehh, It's better, a little. There's more shape to the head. There's some sign of a chest
-and neck now too. At the very least, I'd say this is good enough evidence to say
-that the average girl on Tinder is white (or our cascade is biased!). But we 
-still don't have any features, let alone something that can be identified as a
-face!&lt;/p&gt;
-&lt;h1&gt;Bringing her into focus&lt;/h1&gt;
-&lt;p&gt;There's one thing that the cascade classifier is doing that is making the average 
-only 'meh' and that is that it doesn't care about the location of identified faces.
-The classifier will detect a face anywhere in the image, but I want something 
-like a portrait-like result. This means that just a mere detection is still going
-to result in a blurry, out of focus, image. Clearly we need some better cooperation.
-The classifier does report the location of each object it detects. Let's try
- scaling each photo to frame only the reported face and average those. This is 
-pretty easy to do with OpenCV using a perspective transform&lt;sup id="fnref-transform"&gt;&lt;a class="footnote-ref" href="#fn-transform"&gt;3&lt;/a&gt;&lt;/sup&gt;. Here's how I do that:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;face&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;float32&lt;/span&gt;&lt;span class="p"&gt;([[&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;],[&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="n"&gt;w&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt;
-                   &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="n"&gt;h&lt;/span&gt;&lt;span class="p"&gt;],[&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="n"&gt;w&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="n"&gt;h&lt;/span&gt;&lt;span class="p"&gt;]])&lt;/span&gt;
-&lt;span class="n"&gt;frame&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;float32&lt;/span&gt;&lt;span class="p"&gt;([[&lt;/span&gt;&lt;span class="n"&gt;pic_w&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;pic_w&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt;
-                    &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;pic_h&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;pic_w&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt;
-                    &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;pic_w&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;pic_h&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt;
-                    &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;pic_h&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;pic_h&lt;/span&gt;&lt;span class="p"&gt;]])&lt;/span&gt; 
-&lt;span class="n"&gt;M&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;cv2&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;getPerspectiveTransform&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;face&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;frame&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="n"&gt;new_img&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;cv2&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;warpPerspective&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;img&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;M&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;pic_w&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;pic_h&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;Here, I'm taking the bounding box of the face and having OpenCV get the transform
-required to make it be framed in the full picture. I then apply that transform 
-to the image, and carry on with the averaging from there. After that, we get a
-nice picture:&lt;/p&gt;
-&lt;p&gt;&lt;img alt="Detected and transformed" src="/full_101.png"&gt;&lt;/p&gt;
-&lt;p&gt;Now that's pretty good! This is for the same 21001 positive samples as before, 
-only now they've been centered properly. &lt;/p&gt;
-&lt;h1&gt;An actual average&lt;/h1&gt;
-&lt;p&gt;There's still a problem with the averaging, however. If we make a comparison of
-different averages for different numbers of samples, we can see they don't 
-really change after a certain point.&lt;/p&gt;
-&lt;p&gt;&lt;img alt="Comparison" src="/compare_small.png"&gt;&lt;/p&gt;
-&lt;p&gt;The problem is that our profile images are only 8-bit JPEGs and are being 
-processed as such. This means that we're going to have trouble with precision
-when we start getting close to 256 samples. That's clearly not good enough when
-there's more than 10000 images to be combined! To counter this, I could covert 
-all the images to some higher bit-depth, but instead I've chosen to simply save 
-the average of every 100 positive samples and then average all of those. In 
-addition, I'm also using a numpy ndarray with a type of float64 to hold all of 
-my averaging data, so there shouldn't be any concern for precision issues in this
-method.
-After all this, we get our girl:&lt;/p&gt;
-&lt;p&gt;&lt;img alt="Detected" src="/trans_avg.png"&gt;&lt;/p&gt;
-&lt;p&gt;It's pretty clear that there is a lot less noise than the last attempt, which 
-we should expect from so many samples. Even more, we can even use our cascade to
-see if the result is identifiable as a face:&lt;/p&gt;
-&lt;p&gt;&lt;img alt="Detected" src="/detected.png"&gt;&lt;/p&gt;
-&lt;p&gt;And it turns out it is! That shouldn't be too surprising seeing as it's 
-just an average of positive matches. Though it's still evidence to show that
-the bounding boxes on the detected faces were consistent enough to provide a strong
-average.&lt;/p&gt;
-&lt;div class="footnote"&gt;
-&lt;hr&gt;
-&lt;ol&gt;
-&lt;li id="fn-tinder_pyro"&gt;
-&lt;p&gt;&lt;a href="https://github.com/nneal/tinder_pyro"&gt;Tinder Pyro&lt;/a&gt;, an unofficial 
-ruby wrapper for the Tinder API.&amp;#160;&lt;a class="footnote-backref" href="#fnref-tinder_pyro" title="Jump back to footnote 1 in the text"&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;li id="fn-cascade_classifier"&gt;
-&lt;p&gt;&lt;a href="http://docs.opencv.org/modules/objdetect/doc/cascade_classification.html"&gt;OpenCV Cascade Classification&lt;/a&gt;&amp;#160;&lt;a class="footnote-backref" href="#fnref-cascade_classifier" title="Jump back to footnote 2 in the text"&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;li id="fn-transform"&gt;
-&lt;p&gt;OpenCV's &lt;a href="http://docs.opencv.org/modules/imgproc/doc/geometric_transformations.html#getperspectivetransform"&gt;getPerspectiveTransform&lt;/a&gt; applied with &lt;a href="http://docs.opencv.org/modules/imgproc/doc/geometric_transformations.html#warpperspective"&gt;warpPerspective&lt;/a&gt;&amp;#160;&lt;a class="footnote-backref" href="#fnref-transform" title="Jump back to footnote 3 in the text"&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/div&gt;</content></entry><entry><title>Meet Emily: The Average Tinder Girl</title><link href="/meet-emily.html" rel="alternate"></link><published>2015-01-08T00:00:00-06:00</published><updated>2015-01-08T00:00:00-06:00</updated><author><name>Dan Kolbman</name></author><id>tag:None,2015-01-08:/meet-emily.html</id><summary type="html">&lt;p&gt;Here I go through some data I've collected from Tinder biographies. If you're 
-interested in how the data was collected, or you want to analyze or collect
-your own data, you can get the scripts and some sample data I've collected
-&lt;a href="https://github.com/dankolbman/CleverTind"&gt;here&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;If you're interested in how the composite average was generated, check out
-&lt;a href="/face-avg.html"&gt;Picturing the Average Tinder Girl&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;img alt="Emily" src="/trans_avg.png"&gt;&lt;/p&gt;
-&lt;p&gt;Meet Emily. A 21 year old, white, brunette who uses Tinder. She drinks coffee and
-enjoys music. She likes wine almost as much as she does beer, and she favors
-whiskey as far as liquor is concerned. She is the product of 100,065 Tinder profiles.&lt;/p&gt;
-&lt;h2&gt;Collecting the data&lt;/h2&gt;
-&lt;p&gt;It turns out that the Tinder API is pretty easy to exploit. It only requires a 
-Facebook account with a connected Tinder app to verify and get a auth token. 
-After that, all the calls used by the actual app become available to us and we're
-free to wreck whatever havoc we like.&lt;/p&gt;
-&lt;p&gt;My bot for data collection is pretty simple. It requests suggestions from Tinder,
-which will return a short list of profiles. Then the bot runs through the list and 
-saves all the JSON data for the users, 'swiping' them along the way so they don't
-come back in the future. It's all rinse and repeat from here, and after a while,
-you end up with a bunch of profile data.&lt;/p&gt;
-&lt;p&gt;Profile data consists of a bunch of fields: Name, age, pictures, last activity,
-biography, and more. Below I report some statistics on names, ages, and bio
-data that I've collected from 100,065 profiles.&lt;/p&gt;
-&lt;h2&gt;What's her name&lt;/h2&gt;
-&lt;p&gt;After a quick analysis, the most common name was Emily, followed closely by 
-Sarah.&lt;/p&gt;
-&lt;p&gt;&lt;img alt="Names" src="/names.png"&gt;&lt;/p&gt;
-&lt;p&gt;This doesn't include any variations of the names. For example, I found seven 
-variations of Emily: Emilie, Emilee, Emi, Emile, Emili, Emleigh, and Emillie.
-To sort through all of the possible variations would be a pain, and considering 
-each of the top five are all pretty variable, I'll assume that this list is 
-a good representation of the distribution. It might be interesting to inspect 
-each name and look at how many variates each one has, but again, that would 
-require a lot of hand sifting, so I won't do that here.&lt;/p&gt;
-&lt;h2&gt;How old is she&lt;/h2&gt;
-&lt;p&gt;The next obvious question is her age. Well the age distribution of female Tinder
-profiles looks like this:&lt;/p&gt;
-&lt;p&gt;&lt;img alt="Ages" src="/ages.png"&gt;&lt;/p&gt;
-&lt;p&gt;So she's 21 according to the Tinder dates. However, I after inspecting bios, I 
-found something that may challenge this. I looked at the mentions of the numbers
-14-24 on Tinder bios. Now, Tinder users will know that there is often two
-occasions in which a user will mention a number like this. One is when mentioning
-graduating class, ie 'nyu 16'. The other is when the user is correcting the age
-shown on their profile, ie 'I'm actually 18' (I believe this is often due to users 
-lying about their age in order to create a Facebook account when their younger).
-Either way, we could infer something about age from either of these cases. 
-Here's what that distribution looks like across users:&lt;/p&gt;
-&lt;p&gt;&lt;img alt="Numbers" src="/numbers.png"&gt;&lt;/p&gt;
-&lt;p&gt;First thing we can note about this is the sudden drop in frequency when we get 
-to 19. At first glance, I'd say that this is some supporting evidence that the
-mention of these numbers in bios is mostly users mentioning class year. But if 
-we consider that the class of 2018 also corresponds to a demographic of mostly 
-18 year olds. We could either make the conclusion that 'Users tend to state their
-class year in their profile with freshmen being more likely to than seniors' or
-we could just as validly say that 'Users tend to correct their age on their profile
-with 18 year olds doing so the most and 14 year olds the least'. Therefore, it's
-inconclusive as to which statement is correct.&lt;/p&gt;
-&lt;p&gt;But there is one thing that this says that disagrees with the age reported by 
-Tinder, and that's the fact that 18 is mentioned the most. Remember that 18 
-corresponds to an age of 18 by either of the above cases. We should then think 
-that the most common age should be 18, not 19. Of course there's a lot of other 
-things to consider, like users who are 18 feel compelled to list their age. 
-I would conclude that overall, the evidence points to the actual mean age being
-lower than that reported by Tinder, but I'd take it with a grain of salt.&lt;/p&gt;
-&lt;h2&gt;What are her interests&lt;/h2&gt;
-&lt;p&gt;Perhaps the most interesting data we can look at is in the user biographies. First
-off, it's interesting to note that 53% of users had less than five words
-in their bio. It seems like a lot of wasted opportunity there. The distribution 
-shows that the length decays sub exponentially up to about 80 words, where it 
-just dies off (note logarithmic scale).&lt;/p&gt;
-&lt;p&gt;&lt;img alt="Interests" src="/wc.png"&gt;&lt;/p&gt;
-&lt;p&gt;So then, let's look more closely at some details of the biographies. To do this,
-I've looked at the word frequencies and compare them to the number of users as 
-to represent the number of users that use a word in their profile. The actual 
-word per percentage of users might be a little less than this, considering someone
-might use a word multiple times, but I've assumed this unlikely and take it to be 
-a good estimate.&lt;/p&gt;
-&lt;p&gt;My data parser spits out file of words with the number of times that word was 
-used (sorted by use count). I scanned this file to find common words that might
-fit part of a general and correlate them to imply things about the popularity of
-something.&lt;/p&gt;
-&lt;p&gt;For instance, I started by looking at popular interests like the following:&lt;/p&gt;
-&lt;p&gt;&lt;img alt="Interests" src="/interests.png"&gt;&lt;/p&gt;
-&lt;p&gt;Well music is certainly far ahead of anything else. We can conclude that many Tinder
-users enjoy music.  But just 'music' is rather ambiguous. Here are some of the
-more popular genres I could find in the list.&lt;/p&gt;
-&lt;p&gt;&lt;img alt="Music Genres" src="/genres.png"&gt;&lt;/p&gt;
-&lt;p&gt;Country comes out with a strong lead with more than twice that of rock. Of course
-country is also often used as a identifier, ie 'I'm just a country gal', but they
-go hand in hand for the most part. Again, this popularity likely comes from one 
-of the major demographics (upstate NY) in the data. Rock and punk could also be
-used as adjectives unrelated to genre as well. Overall, we can get some deeper 
-interpretation of popular genres from this, but it shouldn't be taken too seriously.&lt;/p&gt;
-&lt;h3&gt;Beverages&lt;/h3&gt;
-&lt;p&gt;Coffee was the obvious winner over tea, but surprisingly, beer came out just
-above wine, though still not as popular as coffee.
-&lt;img alt="Beverages" src="/beverages.png"&gt;&lt;/p&gt;
-&lt;p&gt;As for liquor, it was pleasant to find that whiskey trumped all. In fact, the
-others are mentioned so infrequently that I hesitate to call them statistically
-meaningful.&lt;/p&gt;
-&lt;p&gt;&lt;img alt="Liquor" src="/liquor.png"&gt;&lt;/p&gt;
-&lt;h3&gt;Sports&lt;/h3&gt;
-&lt;p&gt;Hockey seems like it must be another demographic issue, but it could also be the 
-fact that field hockey is also included in this statistic. 
-&lt;img alt="Sports" src="/sports.png"&gt;&lt;/p&gt;
-&lt;p&gt;Dogs are the clear favorite amongst users, which is not that surprising. If I 
-took the time to train a classifier to identify dogs, I bet I could find a dog 
-in nearly half of all profiles.&lt;/p&gt;
-&lt;p&gt;&lt;img alt="Pets" src="/pets.png"&gt;&lt;/p&gt;</summary><content type="html">&lt;p&gt;Here I go through some data I've collected from Tinder biographies. If you're 
-interested in how the data was collected, or you want to analyze or collect
-your own data, you can get the scripts and some sample data I've collected
-&lt;a href="https://github.com/dankolbman/CleverTind"&gt;here&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;If you're interested in how the composite average was generated, check out
-&lt;a href="/face-avg.html"&gt;Picturing the Average Tinder Girl&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;img alt="Emily" src="/trans_avg.png"&gt;&lt;/p&gt;
-&lt;p&gt;Meet Emily. A 21 year old, white, brunette who uses Tinder. She drinks coffee and
-enjoys music. She likes wine almost as much as she does beer, and she favors
-whiskey as far as liquor is concerned. She is the product of 100,065 Tinder profiles.&lt;/p&gt;
-&lt;h2&gt;Collecting the data&lt;/h2&gt;
-&lt;p&gt;It turns out that the Tinder API is pretty easy to exploit. It only requires a 
-Facebook account with a connected Tinder app to verify and get a auth token. 
-After that, all the calls used by the actual app become available to us and we're
-free to wreck whatever havoc we like.&lt;/p&gt;
-&lt;p&gt;My bot for data collection is pretty simple. It requests suggestions from Tinder,
-which will return a short list of profiles. Then the bot runs through the list and 
-saves all the JSON data for the users, 'swiping' them along the way so they don't
-come back in the future. It's all rinse and repeat from here, and after a while,
-you end up with a bunch of profile data.&lt;/p&gt;
-&lt;p&gt;Profile data consists of a bunch of fields: Name, age, pictures, last activity,
-biography, and more. Below I report some statistics on names, ages, and bio
-data that I've collected from 100,065 profiles.&lt;/p&gt;
-&lt;h2&gt;What's her name&lt;/h2&gt;
-&lt;p&gt;After a quick analysis, the most common name was Emily, followed closely by 
-Sarah.&lt;/p&gt;
-&lt;p&gt;&lt;img alt="Names" src="/names.png"&gt;&lt;/p&gt;
-&lt;p&gt;This doesn't include any variations of the names. For example, I found seven 
-variations of Emily: Emilie, Emilee, Emi, Emile, Emili, Emleigh, and Emillie.
-To sort through all of the possible variations would be a pain, and considering 
-each of the top five are all pretty variable, I'll assume that this list is 
-a good representation of the distribution. It might be interesting to inspect 
-each name and look at how many variates each one has, but again, that would 
-require a lot of hand sifting, so I won't do that here.&lt;/p&gt;
-&lt;h2&gt;How old is she&lt;/h2&gt;
-&lt;p&gt;The next obvious question is her age. Well the age distribution of female Tinder
-profiles looks like this:&lt;/p&gt;
-&lt;p&gt;&lt;img alt="Ages" src="/ages.png"&gt;&lt;/p&gt;
-&lt;p&gt;So she's 21 according to the Tinder dates. However, I after inspecting bios, I 
-found something that may challenge this. I looked at the mentions of the numbers
-14-24 on Tinder bios. Now, Tinder users will know that there is often two
-occasions in which a user will mention a number like this. One is when mentioning
-graduating class, ie 'nyu 16'. The other is when the user is correcting the age
-shown on their profile, ie 'I'm actually 18' (I believe this is often due to users 
-lying about their age in order to create a Facebook account when their younger).
-Either way, we could infer something about age from either of these cases. 
-Here's what that distribution looks like across users:&lt;/p&gt;
-&lt;p&gt;&lt;img alt="Numbers" src="/numbers.png"&gt;&lt;/p&gt;
-&lt;p&gt;First thing we can note about this is the sudden drop in frequency when we get 
-to 19. At first glance, I'd say that this is some supporting evidence that the
-mention of these numbers in bios is mostly users mentioning class year. But if 
-we consider that the class of 2018 also corresponds to a demographic of mostly 
-18 year olds. We could either make the conclusion that 'Users tend to state their
-class year in their profile with freshmen being more likely to than seniors' or
-we could just as validly say that 'Users tend to correct their age on their profile
-with 18 year olds doing so the most and 14 year olds the least'. Therefore, it's
-inconclusive as to which statement is correct.&lt;/p&gt;
-&lt;p&gt;But there is one thing that this says that disagrees with the age reported by 
-Tinder, and that's the fact that 18 is mentioned the most. Remember that 18 
-corresponds to an age of 18 by either of the above cases. We should then think 
-that the most common age should be 18, not 19. Of course there's a lot of other 
-things to consider, like users who are 18 feel compelled to list their age. 
-I would conclude that overall, the evidence points to the actual mean age being
-lower than that reported by Tinder, but I'd take it with a grain of salt.&lt;/p&gt;
-&lt;h2&gt;What are her interests&lt;/h2&gt;
-&lt;p&gt;Perhaps the most interesting data we can look at is in the user biographies. First
-off, it's interesting to note that 53% of users had less than five words
-in their bio. It seems like a lot of wasted opportunity there. The distribution 
-shows that the length decays sub exponentially up to about 80 words, where it 
-just dies off (note logarithmic scale).&lt;/p&gt;
-&lt;p&gt;&lt;img alt="Interests" src="/wc.png"&gt;&lt;/p&gt;
-&lt;p&gt;So then, let's look more closely at some details of the biographies. To do this,
-I've looked at the word frequencies and compare them to the number of users as 
-to represent the number of users that use a word in their profile. The actual 
-word per percentage of users might be a little less than this, considering someone
-might use a word multiple times, but I've assumed this unlikely and take it to be 
-a good estimate.&lt;/p&gt;
-&lt;p&gt;My data parser spits out file of words with the number of times that word was 
-used (sorted by use count). I scanned this file to find common words that might
-fit part of a general and correlate them to imply things about the popularity of
-something.&lt;/p&gt;
-&lt;p&gt;For instance, I started by looking at popular interests like the following:&lt;/p&gt;
-&lt;p&gt;&lt;img alt="Interests" src="/interests.png"&gt;&lt;/p&gt;
-&lt;p&gt;Well music is certainly far ahead of anything else. We can conclude that many Tinder
-users enjoy music.  But just 'music' is rather ambiguous. Here are some of the
-more popular genres I could find in the list.&lt;/p&gt;
-&lt;p&gt;&lt;img alt="Music Genres" src="/genres.png"&gt;&lt;/p&gt;
-&lt;p&gt;Country comes out with a strong lead with more than twice that of rock. Of course
-country is also often used as a identifier, ie 'I'm just a country gal', but they
-go hand in hand for the most part. Again, this popularity likely comes from one 
-of the major demographics (upstate NY) in the data. Rock and punk could also be
-used as adjectives unrelated to genre as well. Overall, we can get some deeper 
-interpretation of popular genres from this, but it shouldn't be taken too seriously.&lt;/p&gt;
-&lt;h3&gt;Beverages&lt;/h3&gt;
-&lt;p&gt;Coffee was the obvious winner over tea, but surprisingly, beer came out just
-above wine, though still not as popular as coffee.
-&lt;img alt="Beverages" src="/beverages.png"&gt;&lt;/p&gt;
-&lt;p&gt;As for liquor, it was pleasant to find that whiskey trumped all. In fact, the
-others are mentioned so infrequently that I hesitate to call them statistically
-meaningful.&lt;/p&gt;
-&lt;p&gt;&lt;img alt="Liquor" src="/liquor.png"&gt;&lt;/p&gt;
-&lt;h3&gt;Sports&lt;/h3&gt;
-&lt;p&gt;Hockey seems like it must be another demographic issue, but it could also be the 
-fact that field hockey is also included in this statistic. 
-&lt;img alt="Sports" src="/sports.png"&gt;&lt;/p&gt;
-&lt;p&gt;Dogs are the clear favorite amongst users, which is not that surprising. If I 
-took the time to train a classifier to identify dogs, I bet I could find a dog 
-in nearly half of all profiles.&lt;/p&gt;
-&lt;p&gt;&lt;img alt="Pets" src="/pets.png"&gt;&lt;/p&gt;</content></entry></feed>
+</div>
+		</div>
+	</body>
+</html>
