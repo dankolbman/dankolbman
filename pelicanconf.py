@@ -9,9 +9,11 @@ SITEURL = ''
 MARKUP = ('md', 'ipynb')
 
 PLUGIN_PATH = './plugins'
-PLUGINS = ['ipynb.markup']
+PLUGINS = ['ipynb']
 
 PATH = 'content'
+ARTICLE_PATHS = ['posts']
+STATIC_PATHS = ['posts']
 
 TIMEZONE = 'America/Chicago'
 
@@ -25,23 +27,39 @@ TRANSLATION_FEED_ATOM = None
 AUTHOR_FEED_ATOM = None
 AUTHOR_FEED_RSS = None
 
-# Blogroll
-LINKS = (('Pelican', 'http://getpelican.com/'),
-         ('Python.org', 'http://python.org/'),
-         ('Jinja2', 'http://jinja.pocoo.org/'),
-         ('You can modify those links in your config file', '#'),)
+SUMMARY_MAX_LENGTH = None
+
+IPYNB_IGNORE_CSS = True
+IPYNB_USE_META_SUMMARY = False
 
 # Social widget
-SOCIAL = (('email', 'dan@kolbman.com'),
-    ('github', 'https://github.com/dankolbman'))
+SOCIAL = (('github', 'https://github.com/dankolbman'),
+          ('globe', 'dankolbman.xyz'))
 
 # Uncomment following line if you want document-relative URLs when developing
 RELATIVE_URLS = True
 
-BIO = ""
+BIO = """
+        Hey! I'm Dan Kolbman. I studied Physics at the Rochester Institute
+        of Technology where I created a
+        <a href="https://github.com/dankolbman/BCIM">dynamics simulation</a>
+        using high performance computing to model
+        <a href="/KolbmanCapII.pdf">cancer cell mechanics</a>.
+      """
+"""
+In my free time, I like take a break from the all that serious science
+and make silly web apps to help me find
+<a href="https://github.com/foodsnag/foodsnag-web">free food</a>
+or write bots to crawl through
+<a href="https://github.com/dankolbman/CleverTind">dating apps</a>.
+I'm an advocate of Open Source/Open Science and publish most of my work
+<a href="https://github.com/dankolbman">freely</a>.
+I gorge on tea and coffee, listen to techno religiously, and
+<a href="http://dankolbman.xyz">travel the world</a>.
+"""
 PROFILE_IMAGE = "dankolbman.jpg"
 
-THEME = "pelican-themes/hyde"
+THEME = "pelican-hyde"
 
 DEFAULT_PAGINATION = 1
 
