@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+<div class="flex flex-col xl:flex-row space-y-4 xl:space-y-0 xl:space-x-4 pt-2">
+
+<div class="xl:grow max-w-prose leading-7">
+
+    <div class="pl-2 text-sm text-stone-400 font-light italic select-none border-b-2 mb-2 border-dashed border-b-gray-200 w-full">About</div>
+
+    <img class="hidden md:block xl:hidden w-40 m-4 float-right w-full rounded-lg overflow-hidden" src="{{ SITEURL }}/theme/images/profile.jpg" />
+
+    <div class="bg-white border rounded-lg shadow-sm p-4">
+
+        <p class="bg-slate-50 px-4 py-2 border-l-2 border-blue-500">
+        I'm an engineer at 
+        <a class="text-blue-500 underline" href="https://www.culturebiosciences.com/">Culture Biosciences</a>.
+        <br />
+        I develop products to drive innovation in sythentic biology.
+        </p>
+
+        <p class="pt-2 indent-2 font-light">
+        My career has been focused on developing software in close collaboration with scientists.
+        </p>
+
+        <p class="pt-2 indent-2 font-light">
+        It all began during my undergraduate program in Physics at the <em>Rochester Institute of Technology</em> where I created <a class="text-blue-500 underline" href="https://github.com/dankolbman/BCIM">computational models</a> to study the interaction of cancer cells.
+        It was clear that the field of research physics had much to gain from ideas of modern software devlopment.
+        </p>
+
+        <p class="pt-2 indent-2 font-light">
+        When I arrived on the scene at the <a class="text-blue-500 underline" href="https://ctds.uchicago.edu">Center for Data Intensive Science</a>
+        at the <em>University of Chicago</em>, however, I found that bioinformaticians already had adopted many modern software practices.
+        Nevertheless, I was able to help improve how cancer genomics data is shared through my contributions to the NCI's <a class="text-blue-500 underline" href="https://gdc.cancer.gov">Genomic Data Commons</a> as a developer.
+        </p>
+
+        <p class="pt-2 indent-2 font-light">
+        Having learned a thing or two working with bioinformaticians, I took my knowledge to the
+        <a class="text-blue-500 underline" href="https://d3b.center">Center for Data Driven Discovery in Biomedicine</a>
+        at the <em>Children's Hospital of Philadelphia</em>.
+        There, I was one of the first engineers to work on the NIH's
+        <a class="text-blue-500 underline" href="https://kidsfirstdrc.org">Kids First Data Center</a>: data sharing in the pediatric cancers and rare-disesase realm.
+        I made defining architectural decisions, established development practices, and lead a team in developing an internal tool to collect and track data.
+        </p>
+
+        <p class="pt-2 indent-2 font-light">
+        I'm now at <a class="text-blue-500 underline" href="https://www.culturebiosciences.com/">Culture Biosciences</a>, a mid-stage biotech startup.
+        I work closely with many skillsets from wetlab technicians to hardware engineers to design and develop products that ultimately progress a variety of fields in biotechnology.
+        </p>
+    </div>
+</div>
+
+<div class="max-w-prose xl:width-min space-y-2">
+    <div class="hidden xl:block pl-2 text-sm text-stone-400 font-light italic select-none border-b-2 border-dashed border-b-gray-200 w-full">Photo</div>
+    <img class="hidden xl:block w-full xl:w-40 rounded-lg overflow-hidden" src="{{ SITEURL }}/theme/images/profile.jpg" />
+
+    <div class="pl-2 text-sm text-stone-400 font-light italic select-none border-b-2 border-dashed border-b-gray-200 w-full">Links</div>
+    <div class="xl:shrink md:flex md:items-stretch md:space-x-4 xl:space-x-0 xl:block space-y-4 md:space-y-0 xl:space-y-4">
+        {% for name, link, icon, color in SOCIAL %}
+        <a class="w-full xl:w-40 flex flex-col p-2 text-center bg-white select-none border border-{{ color }}-500 rounded-lg shadow divide-y divide-{{ color }}-400 fill-stone-700 hover:fill-{{ color }}-900 hover:cursor-pointer text-stone-700 hover:text-stone-900 hover:shadow-lg" href="{{ link }}" >
+
+            <div class="mx-auto h-24 w-24 p-2">
+                {% include icon %}
+            </div>
+
+            <h2 class="text-lg font-medium">
+                {{ name }}
+            </h2>
+        </a>
+        {% endfor %}
+    </div>
+
+    <div class="pl-2 text-sm text-stone-400 font-light italic select-none border-b-2 mb border-dashed border-b-gray-200 w-full">Contact</div>
+    <a class="text-blue-500 italic underline" href="maito:dan@kolbman.com">dan@kolbman.com</a>
+</div>
+
+</div>
+
+{% endblock %}
